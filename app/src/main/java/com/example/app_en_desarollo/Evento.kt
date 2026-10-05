@@ -7,5 +7,4 @@ class Evento (
     val CantAsistentes: Int,
     val Observaciones: String
 ){
-
 }
