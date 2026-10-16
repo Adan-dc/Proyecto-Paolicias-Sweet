@@ -36,8 +36,14 @@ import com.example.app_en_desarollo.ui.components.Footer
 import com.example.app_en_desarollo.ui.components.Header
 
 @Composable
-fun FormularioCliente(
-    onNavigateToSesion: () -> Unit
+fun FormularioRegistroCliente(
+    onNavigateToSesion: () -> Unit,
+
+    onNavigateToInicio: () -> Unit,
+    onNavigateToCategoria: () -> Unit,
+    onNavigateToReserva: () -> Unit,
+    onNavigateToPerfil: () -> Unit,
+
 ) {
 
     val context = LocalContext.current
@@ -64,7 +70,25 @@ fun FormularioCliente(
 
     Scaffold(
         topBar = { Header(title = "REGISTRO USUARIO") },
-        bottomBar = { Footer() }
+        bottomBar = {
+            Footer(
+                onInicioClick = {
+                    onNavigateToInicio()
+                },
+
+                onCatalogoClick = {
+                    onNavigateToCategoria()
+                },
+
+                onReservaClick = {
+                    onNavigateToReserva()
+                },
+
+                onPerfilClick = {
+                    onNavigateToPerfil()
+                }
+            )
+        }
     ) {
         innerPadding ->
 
@@ -154,7 +178,6 @@ fun FormularioCliente(
 
                 Button(
                     onClick = {
-                        onNavigateToSesion()
                         val cliente = Cliente(
                             NombreCompleto = nombre,
                             Empresa = "",
@@ -164,6 +187,7 @@ fun FormularioCliente(
 
                         if (cliente.verificarCorreo()) {
                             Toast.makeText(context, "Correo válido", Toast.LENGTH_SHORT).show()
+                            onNavigateToSesion()
                         } else {
                             Toast.makeText(context, "Correo inválido", Toast.LENGTH_SHORT).show()
                         }
@@ -192,5 +216,6 @@ fun FormularioCliente(
 @Preview(showBackground = true)
 @Composable
 fun FormularioPreview() {
-    FormularioCliente(onNavigateToSesion= {})
+    FormularioRegistroCliente(onNavigateToSesion = {}, onNavigateToInicio = {},
+        onNavigateToCategoria = {}, onNavigateToReserva = {} ,onNavigateToPerfil = {})
 }

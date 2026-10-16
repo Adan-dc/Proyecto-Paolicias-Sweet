@@ -7,16 +7,23 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.app_en_desarollo.ui.screen.FormularioCliente
+import com.example.app_en_desarollo.ui.screen.FormularioRegistroCliente
 import com.example.app_en_desarollo.ui.screen.FormularioSesionCliente
-import com.example.app_en_desarollo.ui.screen.PantallaInicialScreen
+import com.example.app_en_desarollo.ui.screen.MenuProductos
+import com.example.app_en_desarollo.ui.screen.infoPerfil
 
 object Routes{
     const val INICIO = "inicio"
-    const val LOGIN = "login"
+
     const val REGISTER = "register"
 
     const val MENU = "menu"
+
+    const val PERFIL = "perfil"
+
+    const val CATALOGO = "catalogo"
+
+    const val RESERVA = "reserva"
 }
 
 @Composable
@@ -29,28 +36,72 @@ fun AppNavigation(){
         modifier = Modifier.fillMaxSize()
     ){
         composable(Routes.INICIO){
-            PantallaInicialScreen(
-                onNavigateToLogin = {
-                    navController.navigate(Routes.LOGIN)
-                }
-            )
-        }
-
-        composable(Routes.REGISTER){
-            FormularioCliente(
-                onNavigateToSesion = {
-                    navController.navigate(Routes.MENU)
-                }
-            )
-        }
-
-        composable(Routes.LOGIN){
             FormularioSesionCliente (
                 onNavigateToMenu = {
                     navController.navigate(Routes.MENU)
                 },
                 onNavigateToRegister = {
                     navController.navigate(Routes.REGISTER)
+                },
+                onNavigateToInicio = {
+                    navController.navigate(Routes.MENU)
+                },
+                onNavigateToCategoria = {
+                    navController.navigate(Routes.CATALOGO)
+                },
+                onNavigateToReserva = {
+                    navController.navigate(Routes.RESERVA)
+                },
+                onNavigateToPerfil = {
+                    navController.navigate(Routes.PERFIL)
+                }
+            )
+        }
+
+        composable(Routes.REGISTER){
+            FormularioRegistroCliente(
+                onNavigateToSesion = {
+                    navController.navigate(Routes.MENU)
+                },
+                onNavigateToInicio = {
+                    navController.navigate(Routes.MENU)
+                },
+                onNavigateToCategoria = {
+                    navController.navigate(Routes.CATALOGO)
+                },
+                onNavigateToReserva = {
+                    navController.navigate(Routes.RESERVA)
+                },
+                onNavigateToPerfil = {
+                    navController.navigate(Routes.PERFIL)
+                }
+            )
+        }
+
+        composable(Routes.PERFIL){
+            infoPerfil(
+                onNavigateToMenu = {
+                    navController.navigate(Routes.MENU)
+                },
+                onNavigateToCatalogo = {
+                    navController.navigate(Routes.CATALOGO)
+                },
+                onNavigateToReserva = {
+                    navController.navigate(Routes.RESERVA)
+                }
+            )
+        }
+
+        composable(Routes.CATALOGO){
+            MenuProductos(
+                onNavigateToInicio = {
+                    navController.navigate(Routes.INICIO)
+                },
+                onNavigateToReserva = {
+                    navController.navigate(Routes.RESERVA)
+                },
+                onNavigateToPerfil = {
+                    navController.navigate(Routes.PERFIL)
                 }
             )
         }
