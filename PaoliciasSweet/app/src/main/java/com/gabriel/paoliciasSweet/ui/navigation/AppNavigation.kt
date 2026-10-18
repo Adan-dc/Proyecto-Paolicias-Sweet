@@ -1,63 +1,88 @@
-/*
 package com.gabriel.paoliciasSweet.ui.navigation
+
+import android.net.Uri
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myappnavigation.ui.screen.Login
-import com.example.myappnavigation.ui.screen.Register
-import com.example.myappnavigation.ui.screen.ScreenHeroe
 import com.gabriel.paoliciasSweet.ui.screen.CategoriaScreen
-import java.security.Principal
+import com.gabriel.paoliciasSweet.ui.screen.ProductosScreen
+import com.gabriel.paoliciasSweet.ui.viewmodel.CatalogoViewModel
 
-object Routes{
+object Routes {
     const val CATEGORIA = "categoria"
     const val PRODUCTO = "producto/{nombre}"
+
+    const val INICIO = "inicio"
+
+    const val REGISTER = "register"
+
+    const val MENU = "menu"
+
+    const val PERFIL = "perfil"
+
+    const val CATALOGO = "catalogo"
+
+    const val RESERVA = "reserva"
 }
 
 @Composable
-fun AppNavigation(){
+fun AppNavigation() {
     val navController = rememberNavController()
+    val catalogoViewModel: CatalogoViewModel = viewModel()
+
     NavHost(
-        navController=navController,
-        startDestination = Routes.CATEGORIA     //definimos el inicio
-    ){
-        composable (Routes.CATEGORIA) {
+        navController = navController,
+        startDestination = Routes.CATEGORIA // Temporal para probar
+    ) {
+        composable(Routes.CATEGORIA) {
             CategoriaScreen(
-                onNavigateToLogin = {
-                    navController.navigate()
-                }
-            )
-        }//composable inicial
-
-        composable(Routes.LOGIN) {
-            Login(
-                onNavigateToRegister = {
-                    navController.navigate(Routes.REGISTER)
-                },
-                onLoginSuccess = {
-                    //navega a la pantalla inicial
-                    navController.navigate(Routes.PRINCIPAL) {
-                        popUpTo(Routes.LOGIN) { inclusive = true }
-                    }
+                onNavigateToLogin = {},
+                onNavigateToRegister = {},
+                onNavigateToMenu = {},
+                onNavigateToInicio = {},
+                onNavigateToCategoria = {},
+                onNavigateToReserva = {},
+                onNavigateToPerfil = {},
+                onNavigateToProducto = { nombre ->
+                    navController.navigate(
+                        "producto/" + Uri.encode(nombre)
+                    )
                 }
             )
         }
 
-        composable (Routes.REGISTER){
-            Register(
-                onNavigateToLogin = {
-                    navController.navigate(Routes.LOGIN) {
-                        // limpia la pila para no acumular pantallas login activas
-                        popUpTo(Routes.LOGIN) { inclusive = true }
-                    }
-                }
-            )
-        }
+        composable(Routes.PRODUCTO) { entrada ->
+            val nombre = entrada.arguments?.getString("nombre") ?: ""
+            val producto = catalogoViewModel.buscarProducto(nombre)
 
-        composable(Routes.PRINCIPAL) {
-            com.example.myappnavigation.ui.screen.Principal()
+            if (producto != null) {
+                ProductosScreen(
+                    producto = producto,
+                    onNavigateToLogin = {},
+                    onNavigateToRegister = {},
+                    onNavigateToMenu = {},
+                    onNavigateToInicio = {},
+                    onNavigateToCategoria = {},
+                    onNavigateToReserva = {},
+                    onNavigateToPerfil = {},
+                    onNavigateToProducto = { otroNombre ->
+                        navController.navigate(
+                            "producto/" + Uri.encode(otroNombre)
+                        )
+                    },
+                    onNavigateToCatalogo = {
+                        navController.popBackStack(
+                            route = Routes.CATEGORIA,
+                            inclusive = false
+                        )
+                    }
+                )
+            } else {
+                Text(text = "Producto no encontrado")
+            }
         }
     }
 }
- */

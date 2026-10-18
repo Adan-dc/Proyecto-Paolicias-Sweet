@@ -43,13 +43,26 @@ import com.gabriel.paoliciasSweet.ui.components.Header
 @Composable
 fun ProductosScreen(
     producto: ProductosModel,
-    onNavigateToLogin: () -> Unit
+    onNavigateToProducto: (String) -> Unit = {},
+    onNavigateToCatalogo: () -> Unit = {},
+    onNavigateToLogin: () -> Unit,
+    onNavigateToRegister: () -> Unit,
+    onNavigateToMenu: () -> Unit,
+    onNavigateToInicio: () -> Unit,
+    onNavigateToCategoria: () -> Unit,
+    onNavigateToReserva: () -> Unit,
+    onNavigateToPerfil: () -> Unit
 ){
     val context = LocalContext.current
     val catalogoViewModel: CatalogoViewModel = viewModel()
     Scaffold(
         topBar = { Header(title = "PAOLICIAS SWEET-APP") },
-        bottomBar = { Footer() }
+        bottomBar = {  Footer(
+            onInicioClick = { onNavigateToInicio() },
+            onReservaClick = { onNavigateToReserva() },
+            onCatalogoClick = { onNavigateToCatalogo() },
+            onPerfilClick = { onNavigateToPerfil() }
+        )}
     ) {
             innerPadding ->
         Box(
@@ -126,6 +139,9 @@ fun ProductosScreen(
                 ) {
                     items(catalogoViewModel.obtenerProductosFiltrados()) { producto ->
                         Card(
+                            onClick = {
+                                onNavigateToProducto(producto.nombre)
+                            },
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Image(
@@ -157,15 +173,15 @@ fun ProductosScreen(
                 Button(
                     onClick = {
                         Toast.makeText(context, "¡ Yendo al catalogo !", Toast.LENGTH_SHORT).show()
-                        onNavigateToLogin()
+                        onNavigateToCatalogo()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
                         .shadow(8.dp, shape = CircleShape),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFFFC5D3), //0xFFA83959
-                        contentColor = Color(0xFFA83959)
+                        containerColor = Color.White, //0xFFA83959
+                        contentColor = Color.Black
                     ),
                     shape = CircleShape
                 ){
@@ -192,6 +208,7 @@ fun ProductosScrenPreview() {
             ingredientes = "Fresas\nVainilla\nHarina\nAzúcar",
             imagen = R.drawable.tartadefresasyvainilla
         ),
-        onNavigateToLogin = {}
+        onNavigateToLogin = {},onNavigateToRegister = {}, onNavigateToMenu= {}, onNavigateToInicio = {},
+        onNavigateToCategoria = {}, onNavigateToReserva = {} ,onNavigateToPerfil = {}
     )
 }
