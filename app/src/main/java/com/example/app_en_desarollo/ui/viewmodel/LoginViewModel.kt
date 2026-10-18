@@ -1,10 +1,14 @@
 package com.example.app_en_desarollo.ui.viewmodel
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.app_en_desarollo.data.database.AppDatabase
 import com.example.app_en_desarollo.model.LoginModel
+import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel(){
 
@@ -12,17 +16,57 @@ class LoginViewModel : ViewModel(){
         private set
 
     fun onEmailChanged(email: String){
-        uiState = uiState.copy(email = email)
+        uiState = uiState.copy(email = email, errorMessage = null)
     }
 
     fun onPasswordChanged(password: String){
-        uiState = uiState.copy(password = password)
+        uiState = uiState.copy(password = password, errorMessage = null)
     }
 
-    fun onLoginClick(){
-        val email = uiState.email
-        val password = uiState.password
+    fun onLoginClick(
+        context: Context,
+        onSuccess: () -> Unit
+    ){
+        val state = uiState
 
-        println("Iniciando sesión con Email: $email y Contraseña: $password")
+        if(state.email.isBlank() || state.password.isBlank()){
+            uiState = uiState.copy(errorMessage = "Completar los campos de correo y contraseña")
+            return
+        }
+
+        //Validar correo (Contiene el @ y un .)
+        if(!state.email.substringAfter("@").contains(".") || !state.email.contains("@")
+            || state.email.endsWith(".") || state.email.endsWith("@")
+            || state.email.startsWith(".") || state.email.startsWith("@")) {
+            uiState = uiState.copy(errorMessage = "El correo debe ser valido")
+            return
+        }
+
+        viewModelScope.launch {
+
+            val db = AppDatabase.getDatabase(context)
+
+            val usuarioDao = db.usuarioDao()
+
+            val usuario = usuarioDao.login(
+                state.email,
+                state.password
+            )
+
+            if (usuario != null) {
+
+                uiState = uiState.copy(
+                    errorMessage = null
+                )
+
+                onSuccess()
+
+            } else {
+
+                uiState = uiState.copy(
+                    errorMessage = "Correo o contraseña incorrectos."
+                )
+            }
+        }
     }
 }

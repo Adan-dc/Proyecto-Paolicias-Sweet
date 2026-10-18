@@ -11,9 +11,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,56 +28,44 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.app_en_desarollo.Cliente
 import com.example.app_en_desarollo.ui.components.Footer
 import com.example.app_en_desarollo.ui.components.Header
+import com.example.app_en_desarollo.ui.viewmodel.RegisterViewModel
 
 @Composable
 fun FormularioRegistroCliente(
     onNavigateToSesion: () -> Unit,
 
-    onNavigateToInicio: () -> Unit,
+    onNavigateToMenu: () -> Unit,
     onNavigateToCategoria: () -> Unit,
     onNavigateToReserva: () -> Unit,
     onNavigateToPerfil: () -> Unit,
 
+    viewModel: RegisterViewModel = viewModel()
+
 ) {
 
     val context = LocalContext.current
-
-    var nombre by remember {
-        mutableStateOf("")
-    }
-
-    var empresa by remember {
-        mutableStateOf("")
-    }
-
-    var telefono by remember {
-        mutableStateOf("")
-    }
-
-    var correo by remember {
-        mutableStateOf("")
-    }
-
-    var contraseña by remember {
-        mutableStateOf("")
-    }
+    val state = viewModel.uiState
 
     Scaffold(
         topBar = { Header(title = "REGISTRO USUARIO") },
         bottomBar = {
             Footer(
                 onInicioClick = {
-                    onNavigateToInicio()
+                    onNavigateToMenu()
                 },
 
                 onCatalogoClick = {
@@ -104,93 +96,140 @@ fun FormularioRegistroCliente(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
 
-                Text(
-                    text = "Datos del cliente",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 2.sp
+                TextField(
+                    value = state.name,
+                    onValueChange = {
+                        viewModel.onNameChanged(it)
+                    },
+                    label = {
+                        Text("Nombre")
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                TextField(
+                    value = state.empresa,
+                    onValueChange = {
+                        viewModel.onEmpresaChanged(it)
+                    },
+                    label = {
+                        Text("Opcional: Nombre Empresa")
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                TextField(
+                    value = state.telefono,
+                    onValueChange = {
+                        viewModel.onTelefonoChanged(it)
+                    },
+                    label = {
+                        Text("Teléfono (+56 9 XXXXXXXX)")
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                TextField(
+                    value = state.email,
+                    onValueChange = {
+                        viewModel.onEmailChanged(it)
+                    },
+                    label = {
+                        Text("Correo")
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                TextField(
+                    value = state.password,
+                    onValueChange = {
+                        viewModel.onPasswordChanged(it)
+                    },
+                    label = {
+                        Text("Contraseña")
+                    },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
 
                 TextField(
-                    value = nombre,
+                    value = state.confirmPassword,
                     onValueChange = {
-                        nombre = it
+                        viewModel.onConfirmPasswordChanged(it)
                     },
                     label = {
-                        Text("Nombre")
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                TextField(
-                    value = empresa,
-                    onValueChange = {
-                        empresa = it
+                        Text("Repetir contraseña")
                     },
-                    label = {
-                        Text("Opcional: Nombre Empresa")
-                    }
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                state.errorMessage?.let { mensaje ->
 
-                TextField(
-                    value = telefono,
-                    onValueChange = {
-                        telefono = it
-                    },
-                    label = {
-                        Text("Teléfono")
-                    }
-                )
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                TextField(
-                    value = correo,
-                    onValueChange = {
-                        correo = it
-                    },
-                    label = {
-                        Text("Correo")
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                TextField(
-                    value = contraseña,
-                    onValueChange = {
-                        contraseña = it
-                    },
-                    label = {
-                        Text("Contraseña")
-                    }
-                )
+                    Text(
+                        text = mensaje,
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 14.sp
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Button(
                     onClick = {
-                        val cliente = Cliente(
-                            NombreCompleto = nombre,
-                            Empresa = "",
-                            Telefono = telefono,
-                            Correo = correo
-                        )
+                        viewModel.onRegisterClick(
+                            context = context,
+                            onSuccess = {
+                                Toast.makeText(
+                                    context,
+                                    "Se ha registrado correctamente",
+                                    Toast.LENGTH_SHORT
+                                ).show()
 
-                        if (cliente.verificarCorreo()) {
-                            Toast.makeText(context, "Correo válido", Toast.LENGTH_SHORT).show()
-                            onNavigateToSesion()
-                        } else {
-                            Toast.makeText(context, "Correo inválido", Toast.LENGTH_SHORT).show()
-                        }
+                                vibrarTelefono(context)
+
+                                onNavigateToSesion()
+                            }
+                        )
                     },
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
@@ -216,6 +255,6 @@ fun FormularioRegistroCliente(
 @Preview(showBackground = true)
 @Composable
 fun FormularioPreview() {
-    FormularioRegistroCliente(onNavigateToSesion = {}, onNavigateToInicio = {},
+    FormularioRegistroCliente(onNavigateToSesion = {}, onNavigateToMenu = {},
         onNavigateToCategoria = {}, onNavigateToReserva = {} ,onNavigateToPerfil = {})
 }

@@ -24,6 +24,8 @@ object Routes{
     const val CATALOGO = "catalogo"
 
     const val RESERVA = "reserva"
+
+    const val LOGIN = "login"
 }
 
 @Composable
@@ -32,10 +34,10 @@ fun AppNavigation(){
 
     NavHost(
         navController = navController,
-        startDestination = Routes.INICIO, //Pantalla de inicio
+        startDestination = Routes.LOGIN, //Pantalla de inicio
         modifier = Modifier.fillMaxSize()
     ){
-        composable(Routes.INICIO){
+        composable(Routes.LOGIN){
             FormularioSesionCliente (
                 onNavigateToMenu = {
                     navController.navigate(Routes.MENU)
@@ -43,10 +45,7 @@ fun AppNavigation(){
                 onNavigateToRegister = {
                     navController.navigate(Routes.REGISTER)
                 },
-                onNavigateToInicio = {
-                    navController.navigate(Routes.MENU)
-                },
-                onNavigateToCategoria = {
+                onNavigateToCatalogo = {
                     navController.navigate(Routes.CATALOGO)
                 },
                 onNavigateToReserva = {
@@ -61,9 +60,9 @@ fun AppNavigation(){
         composable(Routes.REGISTER){
             FormularioRegistroCliente(
                 onNavigateToSesion = {
-                    navController.navigate(Routes.MENU)
+                    navController.navigate(Routes.LOGIN)
                 },
-                onNavigateToInicio = {
+                onNavigateToMenu = {
                     navController.navigate(Routes.MENU)
                 },
                 onNavigateToCategoria = {
@@ -88,6 +87,9 @@ fun AppNavigation(){
                 },
                 onNavigateToReserva = {
                     navController.navigate(Routes.RESERVA)
+                },
+                onNavigateToLogin = {
+                    navController.navigate(Routes.LOGIN)
                 }
             )
         }
@@ -95,7 +97,7 @@ fun AppNavigation(){
         composable(Routes.CATALOGO){
             MenuProductos(
                 onNavigateToInicio = {
-                    navController.navigate(Routes.INICIO)
+                    navController.navigate(Routes.LOGIN)
                 },
                 onNavigateToReserva = {
                     navController.navigate(Routes.RESERVA)
