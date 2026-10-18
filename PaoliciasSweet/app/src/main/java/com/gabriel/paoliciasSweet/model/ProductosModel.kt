@@ -5,5 +5,6 @@ data class ProductosModel (
     val tipo: String = "",
     val precio: Int = 0,
     val ingredientes: String = "",
-    val imagen: Int = 0
+    val imagen: Int = 0,
+    val seccion: String = ""
 )

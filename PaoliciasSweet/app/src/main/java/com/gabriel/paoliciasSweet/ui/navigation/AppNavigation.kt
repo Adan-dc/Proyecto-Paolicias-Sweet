@@ -1,5 +1,6 @@
 package com.gabriel.paoliciasSweet.ui.navigation
 
+import com.gabriel.paoliciasSweet.ui.screen.InicioScreen
 import android.net.Uri
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -7,7 +8,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.gabriel.paoliciasSweet.ui.screen.CategoriaScreen
+import com.gabriel.paoliciasSweet.ui.screen.CatalogoScreen
 import com.gabriel.paoliciasSweet.ui.screen.ProductosScreen
 import com.gabriel.paoliciasSweet.ui.viewmodel.CatalogoViewModel
 
@@ -35,14 +36,51 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.CATEGORIA // Temporal para probar
+        startDestination = Routes.INICIO // Temporal para probar
     ) {
+        composable(Routes.INICIO) {
+            InicioScreen(
+                onNavigateToLogin = {},
+                onNavigateToRegister = {},
+                onNavigateToMenu = {
+                    catalogoViewModel.cambiarSeccion("Menu")
+
+                    navController.navigate(Routes.CATEGORIA) {
+                        popUpTo(Routes.INICIO) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToInicio = {},
+                onNavigateToCategoria = {
+                    catalogoViewModel.cambiarSeccion("Reposteria")
+
+                    navController.navigate(Routes.CATEGORIA) {
+                        popUpTo(Routes.INICIO) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToReserva = {},
+                onNavigateToPerfil = {}
+            )
+        }
         composable(Routes.CATEGORIA) {
-            CategoriaScreen(
+            CatalogoScreen(
+                catalogoViewModel = catalogoViewModel,
                 onNavigateToLogin = {},
                 onNavigateToRegister = {},
                 onNavigateToMenu = {},
-                onNavigateToInicio = {},
+                onNavigateToInicio = {
+                    navController.navigate(Routes.INICIO) {
+                        popUpTo(Routes.INICIO) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
+                },
                 onNavigateToCategoria = {},
                 onNavigateToReserva = {},
                 onNavigateToPerfil = {},
@@ -64,7 +102,11 @@ fun AppNavigation() {
                     onNavigateToLogin = {},
                     onNavigateToRegister = {},
                     onNavigateToMenu = {},
-                    onNavigateToInicio = {},
+                    onNavigateToInicio = {
+                        navController.navigate(Routes.INICIO) {
+                            launchSingleTop = true
+                        }
+                    },
                     onNavigateToCategoria = {},
                     onNavigateToReserva = {},
                     onNavigateToPerfil = {},
