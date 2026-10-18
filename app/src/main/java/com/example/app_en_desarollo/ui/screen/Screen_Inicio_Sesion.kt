@@ -18,8 +18,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -121,6 +125,16 @@ fun FormularioSesionCliente(
                     onValueChange = { viewModel.onEmailChanged(it) },
                     label = { Text("Correo Electrónico") },
                     singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = "Correo"
+                        )
+                    },
+                    isError = state.emailError != null,
+                    supportingText = {
+                        state.emailError?.let { mensaje -> Text(mensaje) }
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
@@ -135,6 +149,16 @@ fun FormularioSesionCliente(
                     onValueChange = { viewModel.onPasswordChanged(it) },
                     label = { Text("Contraseña") },
                     singleLine = true,
+                    isError = state.passwordError != null,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = "Contraseña"
+                        )
+                    },
+                    supportingText = {
+                        state.passwordError?.let { mensaje -> Text(mensaje) }
+                    },
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     colors = TextFieldDefaults.colors(

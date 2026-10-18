@@ -17,14 +17,20 @@ import com.example.app_en_desarollo.ui.components.Footer
 import com.example.app_en_desarollo.ui.components.Header
 import com.example.app_en_desarollo.ui.viewmodel.LoginViewModel
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.Contacts
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
@@ -45,7 +51,7 @@ fun infoPerfil(
     viewModel: PerfilViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val usuario = viewModel.usuario
+    val state = viewModel.uiState
 
     LaunchedEffect(Unit){
         viewModel.cargarUsuario(context)
@@ -94,7 +100,7 @@ fun infoPerfil(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                if (usuario != null) {
+                if (!state.cargando) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -110,38 +116,61 @@ fun infoPerfil(
                         ) {
 
                             Text(
-                                text = usuario.nombre,
+                                text = "${state.nombre.ifBlank { "Sin Nombre" }}",
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold
                             )
 
                             Spacer(modifier = Modifier.height(20.dp))
 
-                            Text(
-                                text = "⛾Empresa: ${usuario.empresa ?: "No registrada"}",
-                                fontSize = 20.sp,
-                                modifier = Modifier
-                                    .fillMaxWidth()
+                            Row() {
 
-                            )
+                                Icon(
+                                    imageVector = Icons.Default.Business,
+                                    contentDescription = "Empresa"
+                                )
 
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            Text(
-                                text = "✆Teléfono: ${usuario.telefono}",
-                                fontSize = 20.sp,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            )
+                                Text(
+                                    text = "Empresa: ${state.empresa ?: "No registrada"}",
+                                    fontSize = 20.sp,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                )
+                            }
 
                             Spacer(modifier = Modifier.height(12.dp))
 
-                            Text(
-                                text = "✉Correo: ${usuario.email}",
-                                fontSize = 20.sp,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            )
+                            Row() {
+
+                                Icon(
+                                    imageVector = Icons.Default.Contacts,
+                                    contentDescription = "Telefono"
+                                )
+
+                                Text(
+                                    text = "Teléfono: ${state.telefono.ifBlank { "No registrado" }}",
+                                    fontSize = 20.sp,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Row() {
+
+                                Icon(
+                                    imageVector = Icons.Default.Email,
+                                    contentDescription = "Correo"
+                                )
+
+                                Text(
+                                    text = "Correo: ${state.email.ifBlank { "No registrado" }}",
+                                    fontSize = 20.sp,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                )
+                            }
                         }
                     }
 
@@ -171,6 +200,40 @@ fun infoPerfil(
                 ) {
                     Text(
                         text = "Cerrar Sesión",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 2.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Button(
+                    onClick = {
+                        if(SesionBiometrica.sesionVigente(context)){
+                            Toast.makeText(
+                                context,
+                                "Ya esta iniciada tu sesión",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        else{
+                            onNavigateToLogin()
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .shadow(8.dp, shape = CircleShape),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color.Black
+                    ),
+                    border = BorderStroke(2.dp, Color.White),
+                    shape = CircleShape
+                ) {
+                    Text(
+                        text = "Iniciar Sesión",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.ExtraBold,
                         letterSpacing = 2.sp

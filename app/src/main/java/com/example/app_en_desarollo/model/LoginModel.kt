@@ -5,5 +5,9 @@ import android.provider.ContactsContract
 data class LoginModel(
     val email: String = "",
     val password: String = "",
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+
+    val emailError : String? = null,
+    val passwordError: String? = null
+
 )

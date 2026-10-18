@@ -15,8 +15,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Contacts
+import androidx.compose.material.icons.filled.Domain
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,17 +37,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.app_en_desarollo.Cliente
 import com.example.app_en_desarollo.ui.components.Footer
 import com.example.app_en_desarollo.ui.components.Header
 import com.example.app_en_desarollo.ui.viewmodel.RegisterViewModel
@@ -109,6 +112,16 @@ fun FormularioRegistroCliente(
                     label = {
                         Text("Nombre")
                     },
+                    isError = state.nameError != null,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.AccountBox,
+                            contentDescription = "Contraseña"
+                        )
+                    },
+                    supportingText = {
+                        state.nameError?.let { mensaje -> Text(mensaje) }
+                    },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White
@@ -117,6 +130,7 @@ fun FormularioRegistroCliente(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+                //el nombre de la empresa es opcional y sin errores
                 TextField(
                     value = state.empresa,
                     onValueChange = {
@@ -124,6 +138,12 @@ fun FormularioRegistroCliente(
                     },
                     label = {
                         Text("Opcional: Nombre Empresa")
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Domain,
+                            contentDescription = "Contraseña"
+                        )
                     },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
@@ -141,6 +161,16 @@ fun FormularioRegistroCliente(
                     label = {
                         Text("Teléfono (+56 9 XXXXXXXX)")
                     },
+                    isError = state.telefonoError != null,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Contacts,
+                            contentDescription = "Contraseña"
+                        )
+                    },
+                    supportingText = {
+                        state.telefonoError?.let { mensaje -> Text(mensaje) }
+                    },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White
@@ -156,6 +186,16 @@ fun FormularioRegistroCliente(
                     },
                     label = {
                         Text("Correo")
+                    },
+                    isError = state.emailError != null,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = "Contraseña"
+                        )
+                    },
+                    supportingText = {
+                        state.emailError?.let { mensaje -> Text(mensaje) }
                     },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
@@ -174,6 +214,16 @@ fun FormularioRegistroCliente(
                         Text("Contraseña")
                     },
                     singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Password,
+                            contentDescription = "Contraseña"
+                        )
+                    },
+                    isError = state.passwordError != null,
+                    supportingText = {
+                        state.passwordError?.let { mensaje -> Text(mensaje) }
+                    },
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     colors = TextFieldDefaults.colors(
@@ -193,6 +243,16 @@ fun FormularioRegistroCliente(
                         Text("Repetir contraseña")
                     },
                     singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Password,
+                            contentDescription = "Contraseña"
+                        )
+                    },
+                    isError = state.confirmPasswordError != null,
+                    supportingText = {
+                        state.confirmPasswordError?.let { mensaje -> Text(mensaje) }
+                    },
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     colors = TextFieldDefaults.colors(

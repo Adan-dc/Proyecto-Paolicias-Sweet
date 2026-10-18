@@ -13,8 +13,6 @@ import com.example.app_en_desarollo.ui.screen.MenuProductos
 import com.example.app_en_desarollo.ui.screen.infoPerfil
 
 object Routes{
-    const val INICIO = "inicio"
-
     const val REGISTER = "register"
 
     const val MENU = "menu"
@@ -32,6 +30,16 @@ object Routes{
 fun AppNavigation(){
     val navController = rememberNavController()
 
+    fun navegarFooter(ruta: String){
+        navController.navigate(ruta){
+            popUpTo(Routes.CATALOGO){
+                saveState =  true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = Routes.LOGIN, //Pantalla de inicio
@@ -40,19 +48,24 @@ fun AppNavigation(){
         composable(Routes.LOGIN){
             FormularioSesionCliente (
                 onNavigateToMenu = {
-                    navController.navigate(Routes.MENU)
+                    navController.navigate(Routes.CATALOGO) {
+                        popUpTo(Routes.LOGIN){
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                 },
                 onNavigateToRegister = {
-                    navController.navigate(Routes.REGISTER)
+                    navegarFooter(Routes.REGISTER)
                 },
                 onNavigateToCatalogo = {
-                    navController.navigate(Routes.CATALOGO)
+                    navegarFooter(Routes.CATALOGO)
                 },
                 onNavigateToReserva = {
-                    navController.navigate(Routes.RESERVA)
+                    navegarFooter(Routes.RESERVA)
                 },
                 onNavigateToPerfil = {
-                    navController.navigate(Routes.PERFIL)
+                    navegarFooter(Routes.PERFIL)
                 }
             )
         }
@@ -60,19 +73,19 @@ fun AppNavigation(){
         composable(Routes.REGISTER){
             FormularioRegistroCliente(
                 onNavigateToSesion = {
-                    navController.navigate(Routes.LOGIN)
+                    navegarFooter(Routes.LOGIN)
                 },
                 onNavigateToMenu = {
-                    navController.navigate(Routes.MENU)
+                    navegarFooter(Routes.MENU)
                 },
                 onNavigateToCategoria = {
-                    navController.navigate(Routes.CATALOGO)
+                    navegarFooter(Routes.CATALOGO)
                 },
                 onNavigateToReserva = {
-                    navController.navigate(Routes.RESERVA)
+                    navegarFooter(Routes.RESERVA)
                 },
                 onNavigateToPerfil = {
-                    navController.navigate(Routes.PERFIL)
+                    navegarFooter(Routes.PERFIL)
                 }
             )
         }
@@ -80,30 +93,37 @@ fun AppNavigation(){
         composable(Routes.PERFIL){
             infoPerfil(
                 onNavigateToMenu = {
-                    navController.navigate(Routes.MENU)
+                    navegarFooter(Routes.MENU)
                 },
                 onNavigateToCatalogo = {
-                    navController.navigate(Routes.CATALOGO)
+                    navegarFooter(Routes.CATALOGO)
                 },
                 onNavigateToReserva = {
-                    navController.navigate(Routes.RESERVA)
+                    navegarFooter(Routes.RESERVA)
                 },
+                //revisar esto tambien mandar a menu
                 onNavigateToLogin = {
-                    navController.navigate(Routes.LOGIN)
+                    navController.navigate(Routes.LOGIN){
+                        popUpTo(navController.graph.startDestinationId){
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
 
         composable(Routes.CATALOGO){
             MenuProductos(
+                //aca en vez de login mandar a menu
                 onNavigateToInicio = {
-                    navController.navigate(Routes.LOGIN)
+                    navegarFooter(Routes.LOGIN)
                 },
                 onNavigateToReserva = {
-                    navController.navigate(Routes.RESERVA)
+                    navegarFooter(Routes.RESERVA)
                 },
                 onNavigateToPerfil = {
-                    navController.navigate(Routes.PERFIL)
+                    navegarFooter(Routes.PERFIL)
                 }
             )
         }

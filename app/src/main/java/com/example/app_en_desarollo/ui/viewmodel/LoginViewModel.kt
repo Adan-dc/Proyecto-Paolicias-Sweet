@@ -16,11 +16,17 @@ class LoginViewModel : ViewModel(){
         private set
 
     fun onEmailChanged(email: String){
-        uiState = uiState.copy(email = email, errorMessage = null)
+        uiState = uiState.copy(
+            email = email,
+            errorMessage = null,
+            emailError = null)
     }
 
     fun onPasswordChanged(password: String){
-        uiState = uiState.copy(password = password, errorMessage = null)
+        uiState = uiState.copy(
+            password = password,
+            errorMessage = null,
+            passwordError = null)
     }
 
     fun onLoginClick(
@@ -29,8 +35,13 @@ class LoginViewModel : ViewModel(){
     ){
         val state = uiState
 
-        if(state.email.isBlank() || state.password.isBlank()){
-            uiState = uiState.copy(errorMessage = "Completar los campos de correo y contraseña")
+        if(state.email.isBlank()){
+            uiState = uiState.copy(emailError = "Se debe INGRESAR el CORREO")
+            return
+        }
+
+        if(state.password.isBlank()){
+            uiState = uiState.copy(passwordError = "Se debe INGRESAR la Contraseña")
             return
         }
 
@@ -38,7 +49,7 @@ class LoginViewModel : ViewModel(){
         if(!state.email.substringAfter("@").contains(".") || !state.email.contains("@")
             || state.email.endsWith(".") || state.email.endsWith("@")
             || state.email.startsWith(".") || state.email.startsWith("@")) {
-            uiState = uiState.copy(errorMessage = "El correo debe ser valido")
+            uiState = uiState.copy(emailError = "El correo debe ser valido")
             return
         }
 
@@ -56,6 +67,8 @@ class LoginViewModel : ViewModel(){
             if (usuario != null) {
 
                 uiState = uiState.copy(
+                    emailError = null,
+                    passwordError = null,
                     errorMessage = null
                 )
 

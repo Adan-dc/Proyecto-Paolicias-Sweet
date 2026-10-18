@@ -19,42 +19,71 @@ class RegisterViewModel : ViewModel(){
         private set
 
     fun onNameChanged(name: String){
-        uiState = uiState.copy(name = name, errorMessage = null)
+        uiState = uiState.copy(name = name,
+            errorMessage = null,
+            nameError = null)
     }
 
-    fun onEmpresaChanged(empresa: String){
-        uiState = uiState.copy(empresa = empresa, errorMessage = null)
+    fun onEmpresaChanged(name: String){
+        uiState = uiState.copy(empresa = name)
     }
 
     fun onTelefonoChanged(telefono: String){
-        uiState = uiState.copy(telefono = telefono, errorMessage = null)
+        uiState = uiState.copy(telefono = telefono,
+            errorMessage = null,
+            telefonoError = null)
     }
 
     fun onEmailChanged(email: String){
-        uiState = uiState.copy(email = email, errorMessage = null)
+        uiState = uiState.copy(email = email,
+            errorMessage = null,
+            emailError = null)
     }
 
     fun onPasswordChanged(password: String){
-        uiState = uiState.copy(password = password, errorMessage = null)
+        uiState = uiState.copy(password = password,
+            errorMessage = null,
+            passwordError = null)
     }
 
     fun onConfirmPasswordChanged(confirmPassword: String){
-        uiState = uiState.copy(confirmPassword = confirmPassword, errorMessage = null)
+        uiState = uiState.copy(confirmPassword = confirmPassword,
+            errorMessage = null,
+            confirmPasswordError = null)
     }
 
     fun onRegisterClick(context: Context, onSuccess: () -> Unit){
         val state = uiState
 
-        //Validar datos vacios
-        if(state.name.isBlank()|| state.telefono.isBlank() || state.email.isBlank() || state.password.isBlank() || state.confirmPassword.isBlank()){
-            uiState = uiState.copy(errorMessage = "Favor completar todos los campos.")
+        if(state.name.isBlank()) {
+            uiState = uiState.copy(nameError = "Debe COLOCAR un NOMBRE")
+            return
+        }
+
+        if(state.telefono.isBlank()) {
+            uiState = uiState.copy(telefonoError = "Debe COLOCAR un TELEFONO")
+            return
+        }
+
+        if(state.email.isBlank()) {
+            uiState = uiState.copy(emailError = "Debe COLOCAR un CORREO")
+            return
+        }
+
+        if(state.password.isBlank()) {
+            uiState = uiState.copy(passwordError = "Debe COLOCAR una CONTRASEÑA")
+            return
+        }
+
+        if(state.confirmPassword.isBlank()) {
+            uiState = uiState.copy(confirmPasswordError = "se debe CONFIRMAR la CONTRASEÑA")
             return
         }
 
         //Validar telefono (Contiene el +56 9 y tiene 8 digitos)
         if(!state.telefono.startsWith("+56 9") || state.telefono.length != 14) {
             uiState = uiState.copy(
-                errorMessage = "El numero debe tener formato +56 9 XXXXXXXX")
+                telefonoError = "El numero debe tener formato +56 9 XXXXXXXX")
             return
         }
 
@@ -62,7 +91,7 @@ class RegisterViewModel : ViewModel(){
         if(!state.email.substringAfter("@").contains(".") || !state.email.contains("@")
             || state.email.endsWith(".") || state.email.endsWith("@")
             || state.email.startsWith(".") || state.email.startsWith("@")) {
-            uiState = uiState.copy(errorMessage = "El correo debe ser valido")
+            uiState = uiState.copy(emailError = "El correo debe ser valido")
             return
         }
 
