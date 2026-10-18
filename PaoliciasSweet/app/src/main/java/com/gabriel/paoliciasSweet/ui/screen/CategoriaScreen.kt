@@ -1,5 +1,9 @@
 package com.gabriel.paoliciasSweet.ui.screen
-
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.ui.layout.ContentScale
@@ -9,6 +13,13 @@ import androidx.compose.material3.FilterChip
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gabriel.paoliciasSweet.ui.viewmodel.CatalogoViewModel
 import android.widget.Toast
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.gabriel.paoliciasSweet.model.ProductosModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,13 +51,29 @@ import com.gabriel.paoliciasSweet.ui.components.Footer
 import com.gabriel.paoliciasSweet.ui.components.Header
 @Composable
 fun CategoriaScreen(
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNavigateToRegister: () -> Unit,
+    onNavigateToMenu: () -> Unit,
+    onNavigateToInicio: () -> Unit,
+    onNavigateToCategoria: () -> Unit,
+    onNavigateToReserva: () -> Unit,
+    onNavigateToPerfil: () -> Unit,
+    onNavigateToProducto: (String) -> Unit = {}
 ){
     val context = LocalContext.current
     val catalogoViewModel: CatalogoViewModel = viewModel()
+    var productoElegido by remember {
+        mutableStateOf<ProductosModel?>(null)
+    }
+    var cantidad by remember { mutableStateOf(1) }
     Scaffold(
         topBar = { Header(title = "PAOLICIAS SWEET-APP") },
-        bottomBar = { Footer() }
+        bottomBar = {  Footer(
+            onInicioClick = {},
+            onReservaClick = {},
+            onCatalogoClick = {},
+            onPerfilClick = {}
+        ) }
     ) {
             innerPadding ->
         Box(
@@ -98,7 +125,9 @@ fun CategoriaScreen(
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    text="Selecciona los productos para tu evento",
+                    text="Selecciona los productos para tu evento\n" +
+                            "(Los productos a los que se le presione el corazon se" +
+                            "agregaran al evento)",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Normal,
                     letterSpacing = 2.sp
@@ -113,18 +142,52 @@ fun CategoriaScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(catalogoViewModel.obtenerProductosFiltrados()) { producto ->
+                        val estaAgregado = catalogoViewModel.productosReserva.any { reservado ->
+                            reservado.producto.nombre == producto.nombre
+                        }
                         Card(
+                            onClick = {
+                                onNavigateToProducto(producto.nombre)
+                            },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Image(
-                                painter = painterResource(id = producto.imagen),
-                                contentDescription = producto.nombre,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(140.dp),
-                                contentScale = ContentScale.Crop
-                            )
+                            Box {
+                                Image(
+                                    painter = painterResource(id = producto.imagen),
+                                    contentDescription = producto.nombre,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(140.dp),
+                                    contentScale = ContentScale.Crop
+                                )
 
+                                IconButton(
+                                    onClick = {
+                                        cantidad = 1
+
+                                        for (agregado in catalogoViewModel.productosReserva) {
+                                            if (agregado.producto.nombre == producto.nombre) {
+                                                cantidad = agregado.cantidad
+                                            }
+                                        }
+                                        productoElegido = producto
+                                    },
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .padding(8.dp)
+                                        .size(36.dp)
+                                        .background(
+                                            color = if (estaAgregado) Color(0xFFA83959) else Color.White,
+                                            shape = CircleShape
+                                        )
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.FavoriteBorder,
+                                        contentDescription = "Añadir a la reserva",
+                                        tint = if (estaAgregado) Color.White else Color(0xFFA83959)
+                                    )
+                                }
+                            }
                             Text(
                                 text = producto.nombre,
                                 fontWeight = FontWeight.SemiBold,
@@ -153,8 +216,8 @@ fun CategoriaScreen(
                         .height(56.dp)
                         .shadow(8.dp, shape = CircleShape),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFA83959),
-                        contentColor = Color.White
+                        containerColor = Color.White,
+                        contentColor = Color.Black
                     ),
                     shape = CircleShape
                 ){
@@ -166,12 +229,69 @@ fun CategoriaScreen(
                 }//Button
             }//Column
         }//Box1
+        val productoActual = productoElegido
+
+        if (productoActual != null) {
+            AlertDialog(
+                onDismissRequest = {
+                    productoElegido = null
+                },
+                title = {
+                    Text(text = productoActual.nombre)
+                },
+                text = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TextButton(
+                            onClick = { cantidad-- },
+                            enabled = cantidad > 1
+                        ) {
+                            Text("-")
+                        }
+
+                        Text(
+                            text = cantidad.toString(),
+                            fontSize = 22.sp
+                        )
+
+                        TextButton(onClick = { cantidad++ }) {
+                            Text("+")
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            catalogoViewModel.agregarProducto(
+                                productoActual,
+                                cantidad
+                            )
+                            productoElegido = null
+                        }
+                    ) {
+                        Text("Añadir")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { productoElegido = null }
+                    ) {
+                        Text("Cancelar")
+                    }
+                }
+            )
+        }
     }
+
 }
 
 
 @Preview(showBackground = true)
 @Composable
 fun CategoriaScreenPreview(){
-    com.gabriel.paoliciasSweet.ui.screen.CategoriaScreen(onNavigateToLogin = {})
+    com.gabriel.paoliciasSweet.ui.screen.CategoriaScreen(onNavigateToLogin = {},onNavigateToRegister = {}, onNavigateToMenu= {}, onNavigateToInicio = {},
+        onNavigateToCategoria = {}, onNavigateToReserva = {} ,onNavigateToPerfil = {})
 }

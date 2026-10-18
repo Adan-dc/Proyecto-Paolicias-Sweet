@@ -1,5 +1,6 @@
 package com.gabriel.paoliciasSweet.ui.viewmodel
-
+import androidx.compose.runtime.mutableStateListOf
+import com.gabriel.paoliciasSweet.model.ProductoReservaModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -92,5 +93,23 @@ class CatalogoViewModel : ViewModel(){
         }
 
         return null
+    }
+
+    val productosReserva = mutableStateListOf<ProductoReservaModel>()
+
+    fun agregarProducto(producto: ProductosModel, cantidad: Int) {
+        if (cantidad < 1) {
+            return
+        }
+
+        for (posicion in productosReserva.indices) {
+            if (productosReserva[posicion].producto.nombre == producto.nombre) {
+                productosReserva[posicion] =
+                    ProductoReservaModel(producto, cantidad)
+                return
+            }
+        }
+
+        productosReserva.add(ProductoReservaModel(producto, cantidad))
     }
 }
