@@ -1,4 +1,6 @@
 package com.gabriel.paoliciasSweet.ui.screen
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -50,7 +52,7 @@ import androidx.compose.ui.unit.sp
 import com.gabriel.paoliciasSweet.ui.components.Footer
 import com.gabriel.paoliciasSweet.ui.components.Header
 @Composable
-fun CategoriaScreen(
+fun CatalogoScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onNavigateToMenu: () -> Unit,
@@ -58,10 +60,10 @@ fun CategoriaScreen(
     onNavigateToCategoria: () -> Unit,
     onNavigateToReserva: () -> Unit,
     onNavigateToPerfil: () -> Unit,
-    onNavigateToProducto: (String) -> Unit = {}
+    onNavigateToProducto: (String) -> Unit = {},
+    catalogoViewModel: CatalogoViewModel = viewModel()
 ){
     val context = LocalContext.current
-    val catalogoViewModel: CatalogoViewModel = viewModel()
     var productoElegido by remember {
         mutableStateOf<ProductosModel?>(null)
     }
@@ -69,7 +71,7 @@ fun CategoriaScreen(
     Scaffold(
         topBar = { Header(title = "PAOLICIAS SWEET-APP") },
         bottomBar = {  Footer(
-            onInicioClick = {},
+            onInicioClick = {onNavigateToInicio()},
             onReservaClick = {},
             onCatalogoClick = {},
             onPerfilClick = {}
@@ -98,30 +100,62 @@ fun CategoriaScreen(
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     FilterChip(
-                        selected = catalogoViewModel.categoriaSeleccionada == "Todas",
-                        onClick = { catalogoViewModel.cambiarCategoria("Todas") },
-                        label = { Text("Todas") }
+                        selected = catalogoViewModel.seccionSeleccionada == "Menu",
+                        onClick = { catalogoViewModel.cambiarSeccion("Menu") },
+                        label = { Text("Menú") }
                     )
 
                     FilterChip(
-                        selected = catalogoViewModel.categoriaSeleccionada == "Tarta",
-                        onClick = { catalogoViewModel.cambiarCategoria("Tarta") },
-                        label = { Text("Tartas") }
+                        selected = catalogoViewModel.seccionSeleccionada == "Reposteria",
+                        onClick = { catalogoViewModel.cambiarSeccion("Reposteria") },
+                        label = { Text("Repostería") }
                     )
 
-                    FilterChip(
-                        selected = catalogoViewModel.categoriaSeleccionada == "Galleta",
-                        onClick = { catalogoViewModel.cambiarCategoria("Galleta") },
-                        label = { Text("Galletas") }
-                    )
-                    FilterChip(
-                        selected = catalogoViewModel.categoriaSeleccionada == "Bizcocho",
-                        onClick = { catalogoViewModel.cambiarCategoria("Bizcocho") },
-                        label = { Text("Bizcochos") }
-                    )
+                    if (catalogoViewModel.seccionSeleccionada == "Reposteria") {
+                        FilterChip(
+                            selected = catalogoViewModel.categoriaSeleccionada == "Tarta",
+                            onClick = { catalogoViewModel.cambiarCategoria("Tarta") },
+                            label = { Text("Tartas") }
+                        )
+
+                        FilterChip(
+                            selected = catalogoViewModel.categoriaSeleccionada == "Galleta",
+                            onClick = { catalogoViewModel.cambiarCategoria("Galleta") },
+                            label = { Text("Galletas") }
+                        )
+
+                        FilterChip(
+                            selected = catalogoViewModel.categoriaSeleccionada == "Bizcocho",
+                            onClick = { catalogoViewModel.cambiarCategoria("Bizcocho") },
+                            label = { Text("Bizcochos") }
+                        )
+                    } else {
+                        FilterChip(
+                            selected = catalogoViewModel.categoriaSeleccionada == "Entrada",
+                            onClick = { catalogoViewModel.cambiarCategoria("Entrada") },
+                            label = { Text("Entradas") }
+                        )
+
+                        FilterChip(
+                            selected = catalogoViewModel.categoriaSeleccionada == "Plato de fondo",
+                            onClick = {
+                                catalogoViewModel.cambiarCategoria("Plato de fondo")
+                            },
+                            label = { Text("Plato de fondo") }
+                        )
+
+                        FilterChip(
+                            selected = catalogoViewModel.categoriaSeleccionada == "Ensalada",
+                            onClick = { catalogoViewModel.cambiarCategoria("Ensalada") },
+                            label = { Text("Ensaladas") }
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
@@ -283,7 +317,9 @@ fun CategoriaScreen(
                     }
                 }
             )
+
         }
+
     }
 
 }
@@ -291,7 +327,7 @@ fun CategoriaScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun CategoriaScreenPreview(){
-    com.gabriel.paoliciasSweet.ui.screen.CategoriaScreen(onNavigateToLogin = {},onNavigateToRegister = {}, onNavigateToMenu= {}, onNavigateToInicio = {},
+fun CatalogoScreenPreview(){
+    com.gabriel.paoliciasSweet.ui.screen.CatalogoScreen(onNavigateToLogin = {},onNavigateToRegister = {}, onNavigateToMenu= {}, onNavigateToInicio = {},
         onNavigateToCategoria = {}, onNavigateToReserva = {} ,onNavigateToPerfil = {})
 }
