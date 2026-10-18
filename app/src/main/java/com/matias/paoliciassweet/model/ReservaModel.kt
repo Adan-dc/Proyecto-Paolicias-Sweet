@@ -1,7 +1,5 @@
 package com.matias.paoliciassweet.model
 
-import android.os.Message
-
 const val MAX_ASISTENTES = 100
 const val PRECIO_PERSONA = 9000
 

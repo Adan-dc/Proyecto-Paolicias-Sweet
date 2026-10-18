@@ -214,7 +214,7 @@ fun ReservaScreen(
 
             Button(
                 onClick = {
-                    viewModel.onConfirmarReservaClick {
+                    viewModel.onConfirmarReservaClick(context) {
                         Toast.makeText(
                             context,
                             "¡Reserva confirmada!",

@@ -1,13 +1,17 @@
 package com.matias.paoliciassweet.ui.viewmodel
 
-import android.util.Log
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.matias.paoliciassweet.data.database.AppDatabase
+import com.matias.paoliciassweet.data.local.entity.ReservaEntity
 import com.matias.paoliciassweet.model.MAX_ASISTENTES
 import com.matias.paoliciassweet.model.ReservaGuardada
 import com.matias.paoliciassweet.model.ReservaModel
+import kotlinx.coroutines.launch
 
 class ReservaViewModel : ViewModel(){
 
@@ -38,7 +42,29 @@ class ReservaViewModel : ViewModel(){
         uiState = uiState.copy(observaciones = uiState.observaciones + "")
     }
 
-    fun onConfirmarReservaClick(onSuccess: () -> Unit){
+    private var usuarioEmail = ""
+    fun setUsuario(email: String){
+        usuarioEmail = email
+    }
+
+    fun cargarReservas(context: Context){
+        viewModelScope.launch {
+            val db= AppDatabase.getDatabase(context)
+            val lista = db.reservaDao().getReservasPorUsuario(usuarioEmail).map{r->
+                ReservaGuardada(
+                    id=r.id,
+                    tipoEvento = r.tipoEvento,
+                    fecha = r.fecha,
+                    hora = r.hora,
+                    asistentes = r.asistentes,
+                    tieneObservaciones = r.tieneObservaciones
+                )
+            }
+            uiState=uiState.copy(reservasGuardadas = lista)
+        }
+    }
+
+    fun onConfirmarReservaClick(context: Context, onSuccess: () -> Unit){
         val state = uiState
 
         if(!state.fechaValida){
@@ -56,16 +82,23 @@ class ReservaViewModel : ViewModel(){
             return
         }
 
-        val nueva = ReservaGuardada(
-            id = (state.reservasGuardadas.maxOfOrNull { it.id } ?: 0) + 1,
+        val nueva = ReservaEntity(
+            usuarioEmail = usuarioEmail,
             tipoEvento = "Evento",
-            fecha = "${state.fecha.substring(0, 2)}/${
-                state.fecha.substring(2, 4)}/${state.fecha.substring(4)}",
+            fecha = "${state.fecha.substring(0, 2)}/${state.fecha.substring(2, 4)}/${state.fecha.substring(4)}",
             hora = "${state.hora.substring(0, 2)}:${state.hora.substring(2)}",
             asistentes = state.asistentes.toInt(),
-            tieneObservaciones = state.tieneObservaciones
+            tieneObservaciones = state.tieneObservaciones,
+            observaciones = state.observaciones.filter { it.isNotBlank() }.joinToString("; ")
         )
-        uiState = ReservaModel(reservasGuardadas = state.reservasGuardadas + nueva)
-        onSuccess()
+
+        // método asíncronico en SQLite con Room
+        viewModelScope.launch {
+            val db = AppDatabase.getDatabase(context)
+            db.reservaDao().insertReserva(nueva)
+            // formulario limpio (la lista se vuelve a leer en la pantalla de reservas)
+            uiState = ReservaModel(reservasGuardadas = uiState.reservasGuardadas)
+            onSuccess()
+        }
     }
 }
