@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.matias.paoliciassweet.model.MAX_ASISTENTES
+import com.matias.paoliciassweet.model.ReservaGuardada
 import com.matias.paoliciassweet.model.ReservaModel
 
 class ReservaViewModel : ViewModel(){
@@ -55,8 +56,16 @@ class ReservaViewModel : ViewModel(){
             return
         }
 
-        Log.d("ReservaVM", "Reserva: ${state.fecha} ${state.hora} - ${state.asistentes} asistentes")
-        uiState = uiState.copy(errorMessage = null)
+        val nueva = ReservaGuardada(
+            id = (state.reservasGuardadas.maxOfOrNull { it.id } ?: 0) + 1,
+            tipoEvento = "Evento",
+            fecha = "${state.fecha.substring(0, 2)}/${
+                state.fecha.substring(2, 4)}/${state.fecha.substring(4)}",
+            hora = "${state.hora.substring(0, 2)}:${state.hora.substring(2)}",
+            asistentes = state.asistentes.toInt(),
+            tieneObservaciones = state.tieneObservaciones
+        )
+        uiState = ReservaModel(reservasGuardadas = state.reservasGuardadas + nueva)
         onSuccess()
     }
 }

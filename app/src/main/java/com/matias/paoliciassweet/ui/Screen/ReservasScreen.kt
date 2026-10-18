@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.matias.paoliciassweet.Componentes.Footer
 import com.matias.paoliciassweet.Componentes.Header
+import com.matias.paoliciassweet.ui.viewmodel.CatalogoViewModel
 import com.matias.paoliciassweet.model.MAX_ASISTENTES
 import java.text.NumberFormat
 import java.util.Locale
@@ -59,7 +60,9 @@ import com.matias.paoliciassweet.ui.viewmodel.ReservaViewModel
 fun ReservaScreen(
     onNavigateToObservaciones: () -> Unit,
     onNavigateToCatalogo: () -> Unit = {},
-    viewModel: ReservaViewModel = viewModel()
+    onReservaConfirmada: () -> Unit = {},
+    viewModel: ReservaViewModel = viewModel(),
+    catalogoViewModel: CatalogoViewModel = viewModel()
 ){
     val state = viewModel.uiState
     val context = LocalContext.current
@@ -183,7 +186,7 @@ fun ReservaScreen(
 
             val monto = NumberFormat
                 .getIntegerInstance(Locale.forLanguageTag("es-CL"))
-                .format(state.cotizacion)
+                .format(state.cotizacion + catalogoViewModel.totalProductos)
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))
@@ -217,6 +220,7 @@ fun ReservaScreen(
                             "¡Reserva confirmada!",
                             Toast.LENGTH_SHORT
                         ).show()
+                        onReservaConfirmada()
                     }
                 },
                 modifier = Modifier

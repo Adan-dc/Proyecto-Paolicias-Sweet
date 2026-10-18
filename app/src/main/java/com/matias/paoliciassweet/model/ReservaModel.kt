@@ -10,7 +10,10 @@ data class ReservaModel(
     val hora: String = "",
     val asistentes: String ="",
     val observaciones: List<String> = listOf("", ""),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val reservasGuardadas: List<ReservaGuardada> = listOf(
+        ReservaGuardada(13, "Evento de boda", "20/10/2026", "20:00",60,false)
+    )
 ){
     val fechaValida: Boolean
         get(){
