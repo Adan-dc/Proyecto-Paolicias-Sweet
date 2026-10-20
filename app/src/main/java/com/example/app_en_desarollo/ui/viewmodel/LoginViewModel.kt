@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app_en_desarollo.data.database.AppDatabase
 import com.example.app_en_desarollo.model.LoginModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel(){
@@ -67,6 +68,8 @@ class LoginViewModel : ViewModel(){
             if (usuario != null) {
 
                 uiState = uiState.copy(
+                    intentosFallidos = 0,
+                    bloqueado = false,
                     emailError = null,
                     passwordError = null,
                     errorMessage = null
@@ -76,9 +79,30 @@ class LoginViewModel : ViewModel(){
 
             } else {
 
-                uiState = uiState.copy(
-                    errorMessage = "Correo o contraseña incorrectos."
-                )
+                val nuevosIntentos = state.intentosFallidos + 1
+
+                if(nuevosIntentos >= 3){
+                    uiState = uiState.copy(
+                        intentosFallidos = nuevosIntentos,
+                        bloqueado = true,
+                        errorMessage = "Demasiados intentos, intenta nuevamente en 10 segundos"
+                    )
+                    viewModelScope.launch{
+                        delay(10000)
+                        uiState = uiState.copy(
+                            intentosFallidos = 0,
+                            bloqueado = false,
+                            errorMessage = null
+                        )
+                    }
+                }
+
+                else {
+                    uiState = uiState.copy(
+                        intentosFallidos = nuevosIntentos,
+                        errorMessage = "Correo o contraseña incorrectos."
+                    )
+                }
             }
         }
     }
