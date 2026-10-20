@@ -1,6 +1,8 @@
 package com.example.app_en_desarollo.ui.screen
 
 import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,6 +72,26 @@ fun FormularioSesionCliente(
     val context = LocalContext.current
     val state = viewModel.uiState
     val activity = context as FragmentActivity
+
+    val colorBoton by animateColorAsState(
+        targetValue = when (state.intentosFallidos) {
+
+            0 -> Color.White
+
+            1 -> Color(0xFFFFCDD2)
+
+            2 -> Color(0xFFEF9A9A)
+
+            else -> Color(0xFFD32F2F)
+        },
+
+        animationSpec = tween(
+            durationMillis = 1000
+        ),
+
+        label = "AnimacionColorBotonLogin"
+    )
+
     Scaffold(
         topBar = { Header(title = "INICIO SESIÓN") },
         bottomBar = {
@@ -203,12 +226,13 @@ fun FormularioSesionCliente(
                             }
                         )
                     },
+                    enabled = !state.bloqueado,
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         .height(40.dp)
                         .shadow(8.dp, shape = CircleShape),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
+                        containerColor = colorBoton,
                         contentColor = Color.Black
                     ),
                     border = BorderStroke(2.dp, Color.White),

@@ -8,6 +8,9 @@ data class LoginModel(
     val errorMessage: String? = null,
 
     val emailError : String? = null,
-    val passwordError: String? = null
+    val passwordError: String? = null,
+
+    val intentosFallidos : Int = 0,
+    val bloqueado: Boolean = false
 
 )
