@@ -45,7 +45,7 @@ fun Footer(
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { onInicioClick },
+                onClick = { onInicioClick() },
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Home,
