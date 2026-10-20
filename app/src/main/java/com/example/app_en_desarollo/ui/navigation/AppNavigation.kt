@@ -2,20 +2,44 @@ package com.example.app_en_desarollo.ui.navigation
 
 
 import android.net.Uri
+<<<<<<< HEAD
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+=======
+>>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+<<<<<<< HEAD
+import androidx.compose.ui.platform.LocalContext
+=======
+>>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+<<<<<<< HEAD
+import com.example.app_en_desarollo.data.preferences.SesionBiometrica
+=======
+>>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
 import com.example.app_en_desarollo.ui.screen.CatalogoScreen
 import com.example.app_en_desarollo.ui.screen.FormularioRegistroCliente
 import com.example.app_en_desarollo.ui.screen.FormularioSesionCliente
 import com.example.app_en_desarollo.ui.screen.InicioScreen
+<<<<<<< HEAD
+import com.example.app_en_desarollo.ui.screen.ObservacionesScreen
+import com.example.app_en_desarollo.ui.screen.ReservaScreen
+import com.example.app_en_desarollo.ui.screen.ReservasRealizadasScreen
 import com.example.app_en_desarollo.ui.screen.infoPerfil
 import com.example.app_en_desarollo.ui.viewmodel.CatalogoViewModel
+import com.example.app_en_desarollo.ui.viewmodel.ReservaViewModel
+=======
+import com.example.app_en_desarollo.ui.screen.infoPerfil
+import com.example.app_en_desarollo.ui.viewmodel.CatalogoViewModel
+>>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
 import com.gabriel.paoliciasSweet.ui.screen.ProductosScreen
 
 
@@ -33,13 +57,27 @@ object Routes{
 
     const val RESERVA = "reserva"
 
+<<<<<<< HEAD
+    const val OBSERVACIONES = "observaciones"
+
+    const val RESERVAS_REALIZADAS = "reservas realizadas"
+
+=======
+>>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
     const val LOGIN = "login"
 }
 
 @Composable
 fun AppNavigation(){
     val navController = rememberNavController()
+<<<<<<< HEAD
+    val context = LocalContext.current
+
     val catalogoViewModel: CatalogoViewModel = viewModel()
+    val reservaViewModel: ReservaViewModel = viewModel()
+=======
+    val catalogoViewModel: CatalogoViewModel = viewModel()
+>>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
 
     fun navegarFooter(ruta: String){
         navController.navigate(ruta){
@@ -51,14 +89,45 @@ fun AppNavigation(){
         }
     }
 
+<<<<<<< HEAD
+    val irAInicio = {
+        navController.navigate(Routes.INICIO) {
+            popUpTo(Routes.INICIO) { inclusive = false }
+            launchSingleTop = true
+        }
+    }
+    val irACatalogo = {
+        catalogoViewModel.cambiarSeccion("Reposteria")
+        navController.navigate(Routes.CATALOGO) { launchSingleTop = true }
+    }
+    val irAReservas = {
+        navController.navigate(Routes.RESERVAS_REALIZADAS) { launchSingleTop = true }
+    }
+    val irAPerfil = { navegarFooter(Routes.PERFIL) }
+
+    NavHost(
+        navController = navController,
+        startDestination = Routes.LOGIN, //Pantalla de inicio
+        modifier = Modifier.fillMaxSize(),
+        enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn() },
+        exitTransition = { slideOutHorizontally(targetOffsetX = { -it / 3 }) + fadeOut() },
+        popEnterTransition = { slideInHorizontally(initialOffsetX = { -it / 3 }) + fadeIn() },
+        popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) + fadeOut() }
+=======
     NavHost(
         navController = navController,
         startDestination = Routes.LOGIN, //Pantalla de inicio
         modifier = Modifier.fillMaxSize()
+>>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
     ){
         composable(Routes.LOGIN){
             FormularioSesionCliente (
                 onNavigateToMenu = {
+<<<<<<< HEAD
+
+                    reservaViewModel.setUsuario(SesionBiometrica.obtenerEmail(context)?: "")
+=======
+>>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
                     navController.navigate(Routes.INICIO) {
                         popUpTo(Routes.LOGIN){
                             inclusive = true
@@ -100,9 +169,34 @@ fun AppNavigation(){
                 }
             )
         }
+<<<<<<< HEAD
+
+        composable(Routes.PERFIL){
+            infoPerfil(
+                onNavigateToMenu = { navegarFooter(Routes.INICIO) },
+                onNavigateToCatalogo = { navegarFooter(Routes.CATALOGO) },
+                onNavigateToReserva = irAReservas,
+                onNavigateToLogin = {
+                    reservaViewModel.setUsuario("")
+                    navController.navigate(Routes.LOGIN){
+                        popUpTo(navController.graph.startDestinationId){
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+        composable(com.example.app_en_desarollo.ui.navigation.Routes.INICIO) {
+            InicioScreen(
+                onNavigateToLogin = {navController.navigate(Routes.RESERVA)},
+
+
+=======
         composable(com.example.app_en_desarollo.ui.navigation.Routes.INICIO) {
             InicioScreen(
                 onNavigateToLogin = {},
+>>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
                 onNavigateToRegister = {},
                 onNavigateToMenu = {
                     catalogoViewModel.cambiarSeccion("Menu")
@@ -125,7 +219,11 @@ fun AppNavigation(){
                         launchSingleTop = true
                     }
                 },
+<<<<<<< HEAD
+                onNavigateToReserva = {irAReservas()},
+=======
                 onNavigateToReserva = {},
+>>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
                 onNavigateToPerfil = {navegarFooter(Routes.PERFIL)}
             )
         }
@@ -144,7 +242,11 @@ fun AppNavigation(){
                     }
                 },
                 onNavigateToCategoria = {},
+<<<<<<< HEAD
+                onNavigateToReserva = {irAReservas()},
+=======
                 onNavigateToReserva = {},
+>>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
                 onNavigateToPerfil = {
                     navegarFooter(Routes.PERFIL)
                 },
@@ -171,7 +273,11 @@ fun AppNavigation(){
                         }
                     },
                     onNavigateToCategoria = {},
+<<<<<<< HEAD
+                    onNavigateToReserva = {irAReservas()},
+=======
                     onNavigateToReserva = {},
+>>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
                     onNavigateToPerfil = {navegarFooter(Routes.PERFIL)},
                     onNavigateToProducto = { otroNombre ->
                         navController.navigate(
@@ -211,6 +317,47 @@ fun AppNavigation(){
                 }
             )
         }
+<<<<<<< HEAD
+        composable(Routes.RESERVA){
+            ReservaScreen(
+                onNavigateToObservaciones = { navController.navigate(Routes.OBSERVACIONES) },
+                onNavigateToCatalogo = irACatalogo,
+                onReservaConfirmada = { navController.navigate(Routes.RESERVAS_REALIZADAS) },
+                onNavigateToReservas = irAReservas,
+                onNavigateToInicio = irAInicio,
+                onNavigateToPerfil = irAPerfil,
+                viewModel = reservaViewModel,
+                catalogoViewModel = catalogoViewModel
+            )
+        }
+
+        composable(Routes.OBSERVACIONES){
+            ObservacionesScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToInicio = irAInicio,
+                onNavigateToCatalogo = irACatalogo,
+                onNavigateToReservas = irAReservas,
+                onNavigateToPerfil = irAPerfil,
+                viewModel = reservaViewModel
+            )
+        }
+
+        composable(Routes.RESERVAS_REALIZADAS){
+            ReservasRealizadasScreen(
+                onNavigateToNuevaReserva = {
+                    navController.navigate(Routes.RESERVA) {
+                        popUpTo(Routes.RESERVAS_REALIZADAS) { inclusive = true }
+                    }
+                },
+                onNavigateToInicio = irAInicio,
+                onNavigateToCatalogo = irACatalogo,
+                onNavigateToReservas = irAReservas,
+                onNavigateToPerfil = irAPerfil,
+                viewModel = reservaViewModel
+            )
+        }
+=======
+>>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
     }
 }
 
