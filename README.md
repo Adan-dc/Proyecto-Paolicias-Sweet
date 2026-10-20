@@ -2,9 +2,19 @@
 
 ## Descripción del proyecto
 
-En este repositorio se trabajara el proyecto de Policías-Sweet el cual consta de una aplicación movil que abarca muchos puntos, estos puntos son las perspectivas de los usuarios, esta aplicación será capaz de manejar lo que ve el cliente sobre la tienda y como acceder a lo que ofrece la empresa, también esta la parte de administración donde acá se abarcaran las funcionalidades que necesita la dueña como el manejo de inventario, cuentas, costos, y administración en general lo cual va a significar un gran cambio debido al manejo actual de la dueña en base a papel, logrando la digitalización que necesita su empresa , otro usuarios van a hacer los trabajadores debido a que de esta manera todos manejaran la misma información sobre los eventos que están reservados, los cuales previamente deben coordinar el cliente y a la dueña por la confirmación, de esta forma el trabajador sabrá todo lo que requiere el cliente para el evento incluyendo comentarios o anotaciones específicas tales como alergias, por lo tanto este repositorio va administrar la aplicación que será utilizada por la empresa Paolicías-Sweet.
+En este repositorio se trabajará el proyecto de Paolicias Sweet, el cual consta de una aplicación móvil que abarca distintas perspectivas de usuario.
 
-Durante todo el transcurso del proyecto este repositorio manejara las actualizaciones, implementaciones, y componentes de la aplicación, tales como las clases, funciones, base de datos, utilización de recursos nativos, diseños visuales en Material 3, animaciones, todo esto respetando el modelo arquitectónico MVVM.
+La aplicación será capaz de manejar lo que ve el cliente sobre la tienda y cómo acceder a lo que ofrece la empresa. También se contempla la parte de administración, donde se abarcarán las funcionalidades que necesita la dueña, como el manejo de inventario, cuentas, costos y administración en general.
+
+Esto significará un gran cambio debido al manejo actual de la empresa basado principalmente en papel, permitiendo avanzar hacia la digitalización de sus procesos.
+
+Otro tipo de usuario serán los trabajadores, ya que de esta manera todos podrán manejar la misma información sobre los eventos que se encuentren reservados. Estos eventos deberán ser previamente coordinados entre el cliente y la dueña para su confirmación.
+
+De esta forma, el trabajador podrá conocer todos los requerimientos asociados al evento, incluyendo comentarios o anotaciones específicas, tales como alergias u otras condiciones especiales.
+
+Por lo tanto, este repositorio administrará el desarrollo de la aplicación que será utilizada por la empresa Paolicias Sweet.
+
+Durante todo el transcurso del proyecto, este repositorio manejará las actualizaciones, implementaciones y componentes de la aplicación, tales como clases, funciones, base de datos, utilización de recursos nativos, diseños visuales mediante Material 3 y animaciones, respetando el modelo arquitectónico MVVM.
 
 ## Integrantes
 
@@ -43,6 +53,37 @@ Durante todo el transcurso del proyecto este repositorio manejara las actualizac
 - Visualización de información por defecto cuando algún dato opcional no está registrado.
 - Cierre de sesión desde la pantalla de perfil.
 - Eliminación de la sesión activa al cerrar sesión.
+
+### Pantalla de inicio
+
+- Pantalla de bienvenida con imagen principal.
+- Acceso a las secciones de Menú y Repostería.
+- Acceso al catálogo y al perfil desde la barra inferior.
+
+### Catálogo de productos
+
+- Visualización de productos en tarjetas con imagen, nombre y precio.
+- Separación del catálogo en Menú y Repostería.
+- Filtros de Repostería: tartas, galletas y bizcochos.
+- Filtros de Menú: entradas, platos de fondo y ensaladas.
+- Carga de los productos desde una lista local.
+
+### Detalle de productos
+
+- Pantalla de detalle reutilizable para cada producto seleccionado.
+- Visualización de imagen ampliada, nombre, precio e ingredientes.
+- Acceso a otros productos desde la pantalla de detalle.
+- Botón para regresar al catálogo.
+
+### Selección de productos para el evento
+
+- Botón de corazón para seleccionar productos.
+- Ventana para indicar la cantidad que se desea agregar.
+- Validación de una cantidad mínima de un producto.
+- Cambio de color del corazón cuando el producto está agregado.
+- Modificación de la cantidad de un producto seleccionado, sin duplicarlo en la lista.
+- Guardado temporal de los productos y sus cantidades para integrarlos con la reserva.
+- Animación al abrir la ventana de selección de cantidad.
 
 ### Registro de reservas
 
