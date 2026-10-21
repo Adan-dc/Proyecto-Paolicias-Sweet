@@ -77,7 +77,7 @@ fun CatalogoScreen(
         topBar = { Header(title = "PAOLICIAS SWEET-APP") },
         bottomBar = {  Footer(
             onInicioClick = {onNavigateToInicio()},
-            onReservaClick = {},
+            onReservaClick = { onNavigateToReserva() },
             onCatalogoClick = {},
             onPerfilClick = { onNavigateToPerfil()}
         ) }

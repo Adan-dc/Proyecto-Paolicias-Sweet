@@ -67,7 +67,7 @@ fun InicioScreen(
         topBar = { Header(title = "PAOLICIAS SWEET-APP") },
         bottomBar = {  Footer(
             onInicioClick = {},
-            onReservaClick = {},
+            onReservaClick = { onNavigateToReserva() },
             onCatalogoClick = {onNavigateToCategoria()},
             onPerfilClick = { onNavigateToPerfil()}
         ) }
