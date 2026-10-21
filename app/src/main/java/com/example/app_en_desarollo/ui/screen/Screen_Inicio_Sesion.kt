@@ -222,7 +222,7 @@ fun FormularioSesionCliente(
 
                                 vibrarTelefono(context)
 
-                                onNavigateToCatalogo()
+                                onNavigateToMenu()
                             }
                         )
                     },
