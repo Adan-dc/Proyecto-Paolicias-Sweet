@@ -188,10 +188,4 @@ class CatalogoViewModel : ViewModel(){
 
         productosReserva.add(ProductoReservaModel(producto, cantidad))
     }
-<<<<<<< HEAD
-
-    val totalProductos: Int
-        get() = productosReserva.sumOf { it.producto.precio * it.cantidad }
-=======
->>>>>>> 02574050d3f5f556c5f98921c6471d1808f6db5e
 }
