@@ -11,7 +11,7 @@ import com.example.app_en_desarollo.data.local.entity.UserEntity
 
 @Database(
     entities = [UserEntity::class, ReservaEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -33,7 +33,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "paolicias_sweet_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
 
                 INSTANCE = instance
 
