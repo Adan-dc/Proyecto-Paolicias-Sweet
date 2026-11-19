@@ -23,6 +23,7 @@ import com.example.app_en_desarollo.ui.screen.InicioScreen
 import com.example.app_en_desarollo.ui.screen.ObservacionesScreen
 import com.example.app_en_desarollo.ui.screen.ReservaScreen
 import com.example.app_en_desarollo.ui.screen.ReservasRealizadasScreen
+import com.example.app_en_desarollo.ui.screen.ScreenTrabajador
 import com.example.app_en_desarollo.ui.screen.infoPerfil
 import com.example.app_en_desarollo.ui.viewmodel.CatalogoViewModel
 import com.example.app_en_desarollo.ui.viewmodel.ReservaViewModel
@@ -48,6 +49,8 @@ object Routes{
     const val RESERVAS_REALIZADAS = "reservas realizadas"
 
     const val LOGIN = "login"
+
+    const val ADMIN = "admin"
 }
 
 @Composable
@@ -77,7 +80,7 @@ fun AppNavigation(){
             FormularioSesionCliente (
                 onNavigateToMenu = {
 
-                    reservaViewModel.setUsuario(SesionBiometrica.obtenerEmail(context)?: "")
+                    reservaViewModel.setUsuario(SesionBiometrica.obtenerIdentificador(context)?: "")
                     navController.navigate(Routes.INICIO) {
                         popUpTo(Routes.LOGIN){
                             inclusive = true
@@ -96,6 +99,9 @@ fun AppNavigation(){
                 },
                 onNavigateToPerfil = {
                     navegarFooter(Routes.PERFIL)
+                },
+                onNavigateToAdmin = {
+                    navegarFooter(Routes.ADMIN)
                 }
             )
         }
@@ -289,6 +295,15 @@ fun AppNavigation(){
                 onNavigateToCatalogo = {navegarFooter(Routes.CATALOGO)},
                 onNavigateToPerfil = {navegarFooter(Routes.PERFIL)},
                 viewModel = reservaViewModel
+            )
+        }
+
+        composable(Routes.ADMIN){
+            ScreenTrabajador(
+                onNavigateToLogin = {},
+                onNavigateToMenu = {},
+                onNavigateToCatalogo = {},
+                onNavigateToReserva = {}
             )
         }
     }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -20,7 +21,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCard
+import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Devices
+import androidx.compose.material.icons.filled.Diversity3
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -107,6 +112,112 @@ fun Footer(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 12.dp),
+            textAlign = TextAlign.Center
+        )
+
+    }
+}
+@Composable
+fun FooterAdmin(
+    onCalendarioClick: () -> Unit,
+    onProductosClick: () -> Unit,
+    onReservasClick: () -> Unit,
+    onCostoClick: () -> Unit,
+    onPersonalClick: () -> Unit,
+    copyrightText: String = "© 2026 Paolicias-Sweet. Derechos reservados MAG.",
+    backgroundColor: Color = Color(0xFF1B1B1B),
+    textColor: Color = Color.Gray
+){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(backgroundColor),
+    ){
+        NavigationBar {
+            NavigationBarItem(
+                selected = false,
+                onClick = { onCalendarioClick() },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Calendario",
+                        modifier = Modifier.size(20.dp)
+                    )
+                },
+                label = {
+                    Text("Calendario")
+                }
+            )
+
+            NavigationBarItem(
+                selected = false,
+                onClick = { onProductosClick() },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Apps,
+                        contentDescription = "Productos",
+                        modifier = Modifier.size(20.dp)
+                    )
+                },
+                label = {
+                    Text("Productos")
+                }
+            )
+            NavigationBarItem(
+                selected = false,
+                onClick = { onReservasClick() },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Devices,
+                        contentDescription = "Catalogo",
+                        modifier = Modifier.size(20.dp)
+                    )
+                },
+                label = {
+                    Text("Catalogo")
+                }
+            )
+
+            NavigationBarItem(
+                selected = false,
+                onClick = { onCostoClick() },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.AddCard,
+                        contentDescription = "Reserva",
+                        modifier = Modifier.size(20.dp)
+                    )
+                },
+                label = {
+                    Text("Reserva")
+                }
+            )
+
+            NavigationBarItem(
+                selected = false,
+                onClick = { onPersonalClick() },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Diversity3,
+                        contentDescription = "Personal",
+                        modifier = Modifier.size(20.dp)
+                    )
+                },
+                label = {
+                    Text("Personal")
+                }
+            )
+        }
+
+        Text(
+            text = copyrightText,
+            color = textColor,
+            fontSize = 9.sp,
+            maxLines = 1,
+            fontWeight = FontWeight.Normal,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
             textAlign = TextAlign.Center
         )
 

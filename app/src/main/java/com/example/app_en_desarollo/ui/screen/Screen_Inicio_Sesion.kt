@@ -10,6 +10,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
@@ -56,6 +58,7 @@ import com.example.app_en_desarollo.ui.components.Footer
 import com.example.app_en_desarollo.ui.components.Header
 import com.example.app_en_desarollo.ui.viewmodel.LoginViewModel
 import com.example.app_en_desarollo.data.preferences.SesionBiometrica
+import com.example.app_en_desarollo.model.TipoUsuario
 
 @Composable
 fun FormularioSesionCliente(
@@ -65,6 +68,8 @@ fun FormularioSesionCliente(
     onNavigateToCatalogo: () -> Unit,
     onNavigateToReserva: () -> Unit,
     onNavigateToPerfil: () -> Unit,
+
+    onNavigateToAdmin: () -> Unit,
 
     viewModel: LoginViewModel = viewModel()
 
@@ -141,29 +146,84 @@ fun FormularioSesionCliente(
                         .border(4.dp, Color.Black, RectangleShape)
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
-
-                TextField(
-                    value = state.email,
-                    onValueChange = { viewModel.onEmailChanged(it) },
-                    label = { Text("Correo Electrónico") },
-                    singleLine = true,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = "Correo"
-                        )
-                    },
-                    isError = state.emailError != null,
-                    supportingText = {
-                        state.emailError?.let { mensaje -> Text(mensaje) }
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White
-                    )
+                Text(
+                    text = "Iniciar sesión como",
+                    style = MaterialTheme.typography.titleMedium
                 )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+
+                    Button(
+                        onClick = {
+                            viewModel.onTipoUsuarioChanged(TipoUsuario.CLIENTE)
+                        }
+                    ) {
+                        Text("Cliente")
+                    }
+
+                    Button(
+                        onClick = {
+                            viewModel.onTipoUsuarioChanged(TipoUsuario.EMPRESA)
+                            onNavigateToAdmin()
+                        }
+                    ) {
+                        Text("Empresa")
+                    }
+                }
+
+                if (state.tipoUsuario == TipoUsuario.CLIENTE) {
+                    TextField(
+                        value = state.email,
+                        onValueChange = { viewModel.onEmailChanged(it) },
+                        label = { Text("Correo Electrónico") },
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = "Correo"
+                            )
+                        },
+                        isError = state.emailError != null,
+                        supportingText = {
+                            state.emailError?.let { mensaje -> Text(mensaje) }
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
+                        )
+                    )
+
+                }
+                else{
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    TextField(
+                        value = state.rut,
+                        onValueChange = { viewModel.onRutChanged(it) },
+                        label = { Text("Rut Empresa") },
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Business,
+                                contentDescription = "empresa"
+                            )
+                        },
+                        isError = state.rutError != null,
+                        supportingText = {
+                            state.rutError?.let { mensaje -> Text(mensaje) }
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Unspecified),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
+                        )
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -210,8 +270,13 @@ fun FormularioSesionCliente(
                             onSuccess = {
 
                                 SesionBiometrica.guardarSesion(
-                                    context,
-                                    state.email
+                                    context = context,
+                                    identificador =
+                                        if(state.tipoUsuario == TipoUsuario.CLIENTE)
+                                            state.email
+                                        else
+                                            state.rut,
+                                    tipoUsuario = state.tipoUsuario
                                 )
 
                                 Toast.makeText(
@@ -357,5 +422,5 @@ fun FormularioSesionCliente(
 @Composable
 fun FormularioSesionPreview() {
     FormularioSesionCliente(onNavigateToRegister = {}, onNavigateToMenu= {},
-        onNavigateToCatalogo = {}, onNavigateToReserva = {} ,onNavigateToPerfil = {})
+        onNavigateToCatalogo = {}, onNavigateToReserva = {} ,onNavigateToPerfil = {}, onNavigateToAdmin = {})
 }

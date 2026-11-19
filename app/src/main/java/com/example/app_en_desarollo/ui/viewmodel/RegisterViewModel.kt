@@ -9,8 +9,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.app_en_desarollo.data.database.AppDatabase
+import com.example.app_en_desarollo.data.local.entity.ClienteEntity
+import com.example.app_en_desarollo.data.local.entity.EmpresaEntity
 import com.example.app_en_desarollo.data.local.entity.UserEntity
 import com.example.app_en_desarollo.model.RegisterModel
+import com.example.app_en_desarollo.model.TipoUsuario
 import kotlinx.coroutines.launch
 
 
@@ -18,14 +21,27 @@ class RegisterViewModel : ViewModel(){
     var uiState by mutableStateOf(RegisterModel())
         private set
 
+    fun onTipoUsuarioChanged(tipo: TipoUsuario){
+        uiState = uiState.copy(
+            tipoUsuario = tipo,
+            errorMessage = null
+        )
+    }
+
+    fun onRutChanged(rut: String){
+        uiState = uiState.copy(rut = rut,
+            rutError = null)
+    }
+
+    fun onRazonSocialChanged(razonSocial: String){
+        uiState = uiState.copy(razonSocial = razonSocial,
+            razonSocialError = null)
+    }
+
     fun onNameChanged(name: String){
         uiState = uiState.copy(name = name,
             errorMessage = null,
             nameError = null)
-    }
-
-    fun onEmpresaChanged(name: String){
-        uiState = uiState.copy(empresa = name)
     }
 
     fun onTelefonoChanged(telefono: String){
@@ -55,18 +71,16 @@ class RegisterViewModel : ViewModel(){
     fun onRegisterClick(context: Context, onSuccess: () -> Unit){
         val state = uiState
 
-        if(state.name.isBlank()) {
-            uiState = uiState.copy(nameError = "Debe COLOCAR un NOMBRE")
-            return
-        }
-
+        //validaciones comunes
         if(state.telefono.isBlank()) {
             uiState = uiState.copy(telefonoError = "Debe COLOCAR un TELEFONO")
             return
         }
 
-        if(state.email.isBlank()) {
-            uiState = uiState.copy(emailError = "Debe COLOCAR un CORREO")
+        //Validar telefono (Contiene el +56 9 y tiene 8 digitos)
+        if(!state.telefono.startsWith("+56 9") || state.telefono.length != 14) {
+            uiState = uiState.copy(
+                telefonoError = "El numero debe tener formato +56 9 XXXXXXXX")
             return
         }
 
@@ -80,53 +94,99 @@ class RegisterViewModel : ViewModel(){
             return
         }
 
-        //Validar telefono (Contiene el +56 9 y tiene 8 digitos)
-        if(!state.telefono.startsWith("+56 9") || state.telefono.length != 14) {
-            uiState = uiState.copy(
-                telefonoError = "El numero debe tener formato +56 9 XXXXXXXX")
-            return
-        }
-
-        //Validar correo (Contiene el @ y un .)
-        if(!state.email.substringAfter("@").contains(".") || !state.email.contains("@")
-            || state.email.endsWith(".") || state.email.endsWith("@")
-            || state.email.startsWith(".") || state.email.startsWith("@")) {
-            uiState = uiState.copy(emailError = "El correo debe ser valido")
-            return
-        }
-
         //validamos coincidencias en contraseñas
         if(state.password != state.confirmPassword){
             uiState = uiState.copy(errorMessage = "Las contraseñas deben se iguales.")
             return
         }
 
+        //validacion tipo cliente
+        if(state.tipoUsuario == TipoUsuario.CLIENTE){
+
+            if(state.name.isBlank()) {
+                uiState = uiState.copy(nameError = "Debe COLOCAR un NOMBRE")
+                return
+            }
+
+            if(state.email.isBlank()) {
+                uiState = uiState.copy(emailError = "Debe COLOCAR un CORREO")
+                return
+            }
+
+            //Validar correo (Contiene el @ y un .)
+            if(!state.email.substringAfter("@").contains(".") || !state.email.contains("@")
+                || state.email.endsWith(".") || state.email.endsWith("@")
+                || state.email.startsWith(".") || state.email.startsWith("@")) {
+                uiState = uiState.copy(emailError = "El correo debe ser valido")
+                return
+            }
+
+        }
+        else{
+            if(state.rut.isBlank()) {
+                uiState = uiState.copy(rutError = "Debe COLOCAR un RUT")
+                return
+            }
+
+            if(state.razonSocial.isBlank()) {
+                uiState = uiState.copy(razonSocialError = "Debe COLOCAR el RUBRO DE LA EMPRESA")
+                return
+            }
+
+        }
+
         //Si las validaciones son correctas
         viewModelScope.launch{
             val db = AppDatabase.getDatabase(context)
+
             val usuarioDao = db.usuarioDao()
-            val usuarioExistente = usuarioDao.buscarPorEmail(state.email)
-            if(usuarioExistente != null){
-                uiState = uiState.copy(
-                    errorMessage = "El correo ya esta registrado"
-                )
+            val clienteDao = db.clienteDao()
+            val empresaDao = db.empresaDao()
+
+            if(state.tipoUsuario == TipoUsuario.CLIENTE){
+                val clienteExistente = clienteDao.buscarPorEmail(state.email)
+                if(clienteExistente != null) {
+                    uiState = uiState.copy(
+                        errorMessage = "El correo ya esta registrado"
+                    )
+                    return@launch
+                }
             }
             else {
-                val nuevoUsuario = UserEntity(
-                    nombre = state.name,
-                    empresa = state.empresa.ifBlank { null },
-                    telefono = state.telefono,
-                    email = state.email,
-                    password = state.password
-                )
+                val empresaExistente = empresaDao.buscarPorRut(state.rut)
 
-                usuarioDao.insertarUsuario(nuevoUsuario)
+                if(empresaExistente != null){
+                    uiState = uiState.copy(
+                        errorMessage = "El rut ya esta registrado"
+                    )
+                    return@launch
+                }
 
-                uiState = uiState.copy(
-                    errorMessage = null
-                )
-                onSuccess()
             }
+            val nuevoUsuario = UserEntity(
+                password = state.password,
+                telefono = state.telefono
+            )
+
+            val idUsuario = usuarioDao.insertarUsuario(nuevoUsuario).toInt()
+
+            if(state.tipoUsuario == TipoUsuario.CLIENTE){
+                val nuevoCliente = ClienteEntity(
+                    idUsuario = idUsuario,
+                    nombre = state.name,
+                    email = state.email
+                )
+                clienteDao.insertarCliente(nuevoCliente)
+            }
+            else{
+                val nuevaEmpresa = EmpresaEntity(
+                    idUsuario = idUsuario,
+                    rut = state.rut,
+                    razonSocial = state.razonSocial
+                )
+                empresaDao.insertarEmpresa(nuevaEmpresa)
+            }
+            onSuccess()
         }
     }
 }

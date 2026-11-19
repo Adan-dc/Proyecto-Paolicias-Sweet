@@ -9,17 +9,13 @@ import com.example.app_en_desarollo.data.local.entity.UserEntity
 interface UsuarioDao {
 
     @Insert
-    suspend fun insertarUsuario(usuario: UserEntity)
+    suspend fun insertarUsuario(usuario: UserEntity): Long
 
-    @Query("SELECT * FROM usuarios WHERE email = :email LIMIT 1")
-    suspend fun buscarPorEmail(email: String): UserEntity?
+    @Query("""
+    SELECT * FROM usuarios
+    WHERE idUsuario = :idUsuario
+    LIMIT 1
+    """)
+    suspend fun buscarPorId(idUsuario: Int): UserEntity?
 
-    @Query(
-        "SELECT * FROM usuarios " +
-                "WHERE email = :email AND password = :password LIMIT 1"
-    )
-    suspend fun login(
-        email: String,
-        password: String
-    ): UserEntity?
 }
