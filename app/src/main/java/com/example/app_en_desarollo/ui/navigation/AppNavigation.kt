@@ -17,16 +17,24 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.app_en_desarollo.data.preferences.SesionBiometrica
 import com.example.app_en_desarollo.ui.screen.CatalogoScreen
+import com.example.app_en_desarollo.ui.screen.CrearTrabajadorScreen
+import com.example.app_en_desarollo.ui.screen.DetalleCostoScreen
+import com.example.app_en_desarollo.ui.screen.DetalleTrabajadorScreen
 import com.example.app_en_desarollo.ui.screen.FormularioRegistroCliente
 import com.example.app_en_desarollo.ui.screen.FormularioSesionCliente
 import com.example.app_en_desarollo.ui.screen.InicioScreen
+import com.example.app_en_desarollo.ui.screen.ModificarTrabajadorScreen
 import com.example.app_en_desarollo.ui.screen.ObservacionesScreen
 import com.example.app_en_desarollo.ui.screen.ReservaScreen
 import com.example.app_en_desarollo.ui.screen.ReservasRealizadasScreen
+import com.example.app_en_desarollo.ui.screen.ResumenCostoScreen
+import com.example.app_en_desarollo.ui.screen.ScreenCosto
 import com.example.app_en_desarollo.ui.screen.ScreenTrabajador
 import com.example.app_en_desarollo.ui.screen.infoPerfil
 import com.example.app_en_desarollo.ui.viewmodel.CatalogoViewModel
+import com.example.app_en_desarollo.ui.viewmodel.CostoViewModel
 import com.example.app_en_desarollo.ui.viewmodel.ReservaViewModel
+import com.example.app_en_desarollo.ui.viewmodel.TrabajadorViewModel
 import com.gabriel.paoliciasSweet.ui.screen.ProductosScreen
 
 
@@ -51,6 +59,20 @@ object Routes{
     const val LOGIN = "login"
 
     const val ADMIN = "admin"
+
+    const val DETALLE_TRABAJADOR = "detalle_trabajador"
+
+
+    const val CREAR_TRABAJADOR = "crear_trabajador"
+
+
+    const val MODIFICAR_TRABAJADOR = "modificar_trabajador"
+
+    const val COSTO = "costo"
+
+    const val DETALLE_COSTO = "detalle_costo"
+
+    const val RESUMEN_COSTO = "resumen_costo"
 }
 
 @Composable
@@ -60,6 +82,8 @@ fun AppNavigation(){
 
     val catalogoViewModel: CatalogoViewModel = viewModel()
     val reservaViewModel: ReservaViewModel = viewModel()
+    val trabajadorViewModel: TrabajadorViewModel = viewModel()
+    val costoViewModel: CostoViewModel = viewModel()
 
     fun navegarFooter(ruta: String){
         navController.navigate(ruta){
@@ -300,10 +324,93 @@ fun AppNavigation(){
 
         composable(Routes.ADMIN){
             ScreenTrabajador(
-                onNavigateToLogin = {},
-                onNavigateToMenu = {},
-                onNavigateToCatalogo = {},
-                onNavigateToReserva = {}
+                onNavigateToCalendario = {},
+                onNavigateToProductos = {},
+                onNavigateToCosto = {
+                    navController.navigate(Routes.COSTO)
+                },
+                onNavigateToReservas = {},
+                onNavigateToDetalleTrabajador = {
+                    navController.navigate(Routes.DETALLE_TRABAJADOR)},
+                onNavigateToCrearTrabajador = {
+                    navController.navigate(Routes.CREAR_TRABAJADOR)
+                },
+                onNavigateToModificarTrabajador = {
+                    navController.navigate(Routes.MODIFICAR_TRABAJADOR)
+                },
+                viewModel = trabajadorViewModel
+            )
+        }
+
+        composable(Routes.DETALLE_TRABAJADOR) {
+
+            DetalleTrabajadorScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                viewModel = trabajadorViewModel
+            )
+        }
+
+        composable(Routes.CREAR_TRABAJADOR) {
+
+            CrearTrabajadorScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                viewModel = trabajadorViewModel
+            )
+        }
+
+        composable(Routes.MODIFICAR_TRABAJADOR) {
+
+            ModificarTrabajadorScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                viewModel = trabajadorViewModel
+            )
+        }
+
+        composable(Routes.COSTO) {
+
+            ScreenCosto(
+                onNavigateToDetalleCosto = {
+                    navController.navigate(Routes.DETALLE_COSTO)
+                },
+
+                onNavigateToPersonal = {
+                    navegarFooter(Routes.ADMIN)
+                },
+
+                viewModel = costoViewModel
+            )
+        }
+
+        composable(Routes.DETALLE_COSTO) {
+
+            DetalleCostoScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToResumenCosto = {
+                    navController.navigate(Routes.RESUMEN_COSTO)
+                },
+                onNavigateToPersonal = {
+                    navegarFooter(Routes.ADMIN)
+                },
+
+                viewModel = costoViewModel
+            )
+        }
+
+        composable(Routes.RESUMEN_COSTO) {
+
+            ResumenCostoScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                viewModel = costoViewModel
             )
         }
     }

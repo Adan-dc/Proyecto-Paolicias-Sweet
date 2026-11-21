@@ -25,6 +25,7 @@ import com.example.app_en_desarollo.ui.viewmodel.LoginViewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,8 +38,11 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -46,33 +50,40 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.app_en_desarollo.data.preferences.SesionBiometrica
 import com.example.app_en_desarollo.model.TipoUsuario
 import com.example.app_en_desarollo.ui.components.FooterAdmin
+import com.example.app_en_desarollo.ui.navigation.Routes
 import com.example.app_en_desarollo.ui.viewmodel.PerfilViewModel
 import com.example.app_en_desarollo.ui.viewmodel.TrabajadorViewModel
 
 
 @Composable
 fun ScreenTrabajador(
-    onNavigateToLogin: () -> Unit,
-    onNavigateToMenu: () -> Unit,
-    onNavigateToCatalogo: () -> Unit,
-    onNavigateToReserva: () -> Unit,
-    viewModel: TrabajadorViewModel = viewModel()
+    onNavigateToCalendario: () -> Unit,
+    onNavigateToProductos: () -> Unit,
+    onNavigateToCosto: () -> Unit,
+    onNavigateToReservas: () -> Unit,
+    onNavigateToDetalleTrabajador: () -> Unit,
+    onNavigateToCrearTrabajador: () -> Unit,
+    onNavigateToModificarTrabajador: () -> Unit,
+    viewModel: TrabajadorViewModel
 ) {
     val trabajadores = viewModel.trabajadores
-    val seleccionado = viewModel.trabajadorSeleccionado
+    val reservas = viewModel.reservas
+    val reservaSeleccionada = viewModel.reservaSeleccionada
 
-    var mostrarConfirmacion by remember {
+    var menuEventosAbierto by remember {
         mutableStateOf(false)
     }
 
     LaunchedEffect(Unit){
         viewModel.listarTrabajadores()
+        viewModel.listarReservas()
     }
 
     Scaffold(
@@ -92,6 +103,7 @@ fun ScreenTrabajador(
                 },
 
                 onCostoClick = {
+                    onNavigateToCosto()
                 },
 
                 onPersonalClick = {
@@ -106,179 +118,223 @@ fun ScreenTrabajador(
                 .padding(innerPadding)
                 .background(Color(0xFFFFC5D3)),
             contentAlignment = Alignment.TopCenter
-        ) {Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
         ) {
-
-            Text(
-                text = "Personal",
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            LazyColumn(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(260.dp)
+                    .fillMaxSize()
+                    .padding(16.dp)
             ) {
 
-                items(trabajadores) { trabajador ->
+                Text(
+                    text = "Personal",
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold
+                )
 
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                            .clickable() {
-                                viewModel.seleccionarTrabajador(trabajador)
-                            }
-                    ) {
+                Spacer(modifier = Modifier.height(24.dp))
 
-                        Row(
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(260.dp)
+                ) {
+
+                    items(trabajadores) { trabajador ->
+
+                        Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                                .padding(vertical = 5.dp)
+                                .clickable {
+                                    viewModel.seleccionarTrabajador(trabajador)
+                                    onNavigateToDetalleTrabajador()
+                                }
                         ) {
 
-                            Text(
-                                text = trabajador.nombreCompleto
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color.White)
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
 
-                            Text(
-                                text = if (trabajador.estado) {
-                                    "No disponible"
-                                } else {
-                                    "Disponible"
-                                },
-                                fontWeight = FontWeight.Bold
-                            )
+                                Text(
+                                    text = trabajador.nombreCompleto
+                                )
+
+                                Text(
+                                    text = if (trabajador.estado) {
+                                        "No disponible"
+                                    } else {
+                                        "Disponible"
+                                    },
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         }
                     }
                 }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
 
-            seleccionado?.let { trabajador ->
+                Spacer(modifier = Modifier.height(20.dp))
 
-                Card(
+                Text(
+                    text = "Eventos",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 28.sp
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                val cantidadTrabajadores = if (reservaSeleccionada?.id != null) {
+
+                    trabajadores.count {
+                        it.idReservaAsignada == reservaSeleccionada.id
+                    }
+
+                } else {
+                    0
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+
+                    Box(
+                        modifier = Modifier.weight(2f)
+                    ) {
+
+                        OutlinedButton(
+                            onClick = {
+                                menuEventosAbierto = true
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White,
+                                contentColor = Color.Black
+                            ),
+                        ) {
+
+                            Text(
+                                text = if (reservaSeleccionada != null) {
+
+                                    "${reservaSeleccionada.tipoEvento} • ${reservaSeleccionada.fecha}"
+
+                                } else {
+
+                                    "Evento • Fecha"
+                                }
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = menuEventosAbierto,
+                            onDismissRequest = {
+                                menuEventosAbierto = false
+                            }
+                        ) {
+
+                            reservas.forEach { reserva ->
+
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            "${reserva.tipoEvento} • ${reserva.fecha}"
+                                        )
+                                    },
+
+                                    onClick = {
+
+                                        viewModel.seleccionarReserva(reserva)
+
+                                        menuEventosAbierto = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Text(
+                            text = "Cantidad",
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Text(
+                            text = if (reservaSeleccionada == null) {
+                                "-"
+                            } else {
+                                "$cantidadTrabajadores"
+                            },
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(35.dp))
+
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-
-                    Column(
+                    Button(
+                        onClick = {
+                            onNavigateToCrearTrabajador()
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
+                            .height(40.dp)
+                            .shadow(8.dp, shape = CircleShape),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        ),
+                        border = BorderStroke(2.dp, Color.White),
+                        shape = CircleShape
                     ) {
-
                         Text(
-                            text = "Información del trabajador",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
+                            "Crear Trabajador",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            letterSpacing = 2.sp
                         )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text("Nombre: ${trabajador.nombreCompleto}")
-                        Text("RUT: ${trabajador.rut}")
-                        Text("Correo: ${trabajador.email}")
-                        Text("Dirección: ${trabajador.direccion}")
-
-                        Text(
-                            text = if (trabajador.estado) {
-                                "Estado: No disponible"
-                            } else {
-                                "Estado: Disponible"
-                            }
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                    Button(
-                        onClick = {
-                            // después conectaremos la lista de eventos
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Asignar evento")
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     Button(
                         onClick = {
-                            mostrarConfirmacion = true
+                            onNavigateToModificarTrabajador()
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .shadow(8.dp, shape = CircleShape),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        ),
+                        border = BorderStroke(2.dp, Color.White),
+                        shape = CircleShape
                     ) {
-                        Text("Eliminar trabajador")
+                        Text(
+                            "Modificar Trabajador",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            letterSpacing = 2.sp
+                        )
                     }
                 }
             }
         }
-            if (mostrarConfirmacion && seleccionado != null) {
-
-                AlertDialog(
-                    onDismissRequest = {
-                        mostrarConfirmacion = false
-                    },
-
-                    title = {
-                        Text("Eliminar trabajador")
-                    },
-
-                    text = {
-                        Text(
-                            "¿Está seguro de eliminar a ${seleccionado.nombreCompleto}?"
-                        )
-                    },
-
-                    confirmButton = {
-
-                        Button(
-                            onClick = {
-
-                                seleccionado.id?.let { id ->
-                                    viewModel.borrarTrabajador(id)
-                                }
-
-                                viewModel.limpiarTrabajadorSeleccionado()
-
-                                mostrarConfirmacion = false
-                            }
-                        ) {
-                            Text("Sí, eliminar")
-                        }
-                    },
-
-                    dismissButton = {
-
-                        Button(
-                            onClick = {
-                                mostrarConfirmacion = false
-                            }
-                        ) {
-                            Text("Cancelar")
-                        }
-                    }
-                )
-            }
-            }
-        }
     }
-}
-@Preview(showBackground = true)
-@Composable
-fun ScreenTrabajadorPreview() {
-    ScreenTrabajador(
-        onNavigateToLogin = {},
-        onNavigateToMenu = {},
-        onNavigateToCatalogo = {},
-        onNavigateToReserva = {}
-    )
 }

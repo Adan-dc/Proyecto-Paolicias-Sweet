@@ -165,22 +165,22 @@ fun FooterAdmin(
             )
             NavigationBarItem(
                 selected = false,
-                onClick = { onReservasClick() },
+                onClick = { onCostoClick() },
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Devices,
-                        contentDescription = "Catalogo",
+                        contentDescription = "Costo",
                         modifier = Modifier.size(20.dp)
                     )
                 },
                 label = {
-                    Text("Catalogo")
+                    Text("Costo")
                 }
             )
 
             NavigationBarItem(
                 selected = false,
-                onClick = { onCostoClick() },
+                onClick = { onReservasClick() },
                 icon = {
                     Icon(
                         imageVector = Icons.Default.AddCard,

@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app_en_desarollo.data.api.RetrofitGeneral
+import com.example.app_en_desarollo.model.ReservaAdminModel
 import com.example.app_en_desarollo.model.TipoUsuario
 import com.example.app_en_desarollo.model.TrabajadorModel
 import kotlinx.coroutines.launch
@@ -16,6 +17,12 @@ class TrabajadorViewModel : ViewModel(){
         private set
 
     var trabajadorSeleccionado by mutableStateOf<TrabajadorModel?>(null)
+        private set
+
+    var reservas by mutableStateOf<List<ReservaAdminModel>>(emptyList())
+        private set
+
+    var reservaSeleccionada by mutableStateOf<ReservaAdminModel?>(null)
         private set
 
     var uiState by mutableStateOf(TrabajadorModel())
@@ -34,8 +41,8 @@ class TrabajadorViewModel : ViewModel(){
     }
 
     fun onEmailChanged(email: String){
-        uiState = uiState.copy(email = email,
-            emailError = null,
+        uiState = uiState.copy(correo = email,
+            correoError = null,
             errorMessage = null)
     }
 
@@ -50,8 +57,10 @@ class TrabajadorViewModel : ViewModel(){
         cargarTrabajador(trabajador)
     }
 
+
     fun limpiarTrabajadorSeleccionado() {
         trabajadorSeleccionado = null
+        uiState = TrabajadorModel()
     }
 
     fun listarTrabajadores() {
@@ -64,7 +73,10 @@ class TrabajadorViewModel : ViewModel(){
         }
     }
 
-    fun crearTrabajador() {
+    fun crearTrabajador(
+        onSuccess: () -> Unit,
+        onError: () -> Unit
+    ) {
 
         if (uiState.nombreCompleto.isBlank()) {
             uiState = uiState.copy(
@@ -80,9 +92,9 @@ class TrabajadorViewModel : ViewModel(){
             return
         }
 
-        if (uiState.email.isBlank()) {
+        if (uiState.correo.isBlank()) {
             uiState = uiState.copy(
-                emailError = "Debe ingresar el correo"
+                correoError = "Debe ingresar el correo"
             )
             return
         }
@@ -97,7 +109,7 @@ class TrabajadorViewModel : ViewModel(){
         val nuevoTrabajador = TrabajadorModel(
             nombreCompleto = uiState.nombreCompleto,
             rut = uiState.rut,
-            email = uiState.email,
+            correo = uiState.correo,
             direccion = uiState.direccion,
             estado = false
         )
@@ -111,11 +123,17 @@ class TrabajadorViewModel : ViewModel(){
 
                 listarTrabajadores()
 
+                uiState = TrabajadorModel()
+
+                onSuccess()
+
             } catch (e: Exception) {
 
                 uiState = uiState.copy(
                     errorMessage = "No se pudo crear el trabajador"
                 )
+
+                onError()
 
                 e.printStackTrace()
             }
@@ -125,18 +143,18 @@ class TrabajadorViewModel : ViewModel(){
         uiState = trabajador.copy(
             nombreError = null,
             rutError = null,
-            emailError = null,
+            correoError = null,
             direccionError = null,
             errorMessage = null
         )
     }
-    fun actualizarTrabajador(id: Long){
+    fun actualizarTrabajador(id: Long, onSuccess: () -> Unit, onError: () -> Unit){
 
         val trabajadorActualizado = TrabajadorModel(
             id = id,
             nombreCompleto = uiState.nombreCompleto,
             rut = uiState.rut,
-            email = uiState.email,
+            correo = uiState.correo,
             direccion = uiState.direccion,
             estado = uiState.estado,
             idReservaAsignada = uiState.idReservaAsignada
@@ -147,13 +165,16 @@ class TrabajadorViewModel : ViewModel(){
 
                 listarTrabajadores()
 
+                onSuccess()
+
             } catch (e: Exception){
+                onError()
                 e.printStackTrace()
             }
         }
 
     }
-    fun asignarReserva(idTrabajador: Long, idReserva: Long){
+    fun asignarReserva(idTrabajador: Long, idReserva: Long, onSuccess: () -> Unit, onError: () -> Unit){
         viewModelScope.launch {
             try {
                 val datos = mapOf("idReserva" to idReserva)
@@ -161,20 +182,70 @@ class TrabajadorViewModel : ViewModel(){
                 RetrofitGeneral.trabajadorApi.asignarEvento(idTrabajador, datos)
 
                 listarTrabajadores()
+
+                onSuccess()
             } catch (e: Exception){
+                onError()
                 e.printStackTrace()
             }
         }
     }
-    fun borrarTrabajador(idTrabajador: Long){
+
+    fun cancelarAsignacion(idTrabajador: Long, onSuccess: () -> Unit, onError: () -> Unit) {
+
+        viewModelScope.launch {
+
+            try {
+
+                RetrofitGeneral.trabajadorApi
+                    .cancelarAsignacion(idTrabajador)
+
+                listarTrabajadores()
+
+                onSuccess()
+
+            } catch (e: Exception) {
+                onError()
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun borrarTrabajador(idTrabajador: Long, onSuccess: () -> Unit, onError: () -> Unit){
         viewModelScope.launch {
             try {
                 RetrofitGeneral.trabajadorApi.eliminarTrabajador(idTrabajador)
 
                 listarTrabajadores()
+
+                onSuccess()
             }catch (e: Exception){
+                onError()
                 e.printStackTrace()
             }
         }
+    }
+
+    fun listarReservas() {
+
+        viewModelScope.launch {
+
+            try {
+
+                reservas = RetrofitGeneral.reservaAdminApi.listarReservas()
+
+            } catch (e: Exception) {
+
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun seleccionarReserva(reserva: ReservaAdminModel) {
+        reservaSeleccionada = reserva
+    }
+
+    fun limpiarReservaSeleccionada() {
+        reservaSeleccionada = null
     }
 }
