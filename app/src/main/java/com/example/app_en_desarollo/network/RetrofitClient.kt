@@ -5,8 +5,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
 
-    private const val URL_PRODUCTOS = "http://localhost:8085/"
-    private const val URL_CLIENTES = "http://localhost:8086/"
+    private const val IP = "192.168.100.34"
+    private const val URL_PRODUCTOS = "http://$IP:8085/"
+    private const val URL_CLIENTES = "http://$IP:8086/"
 
     private fun crear(url: String): Retrofit {
         return Retrofit.Builder()
