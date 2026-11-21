@@ -1,5 +1,13 @@
 package com.example.app_en_desarollo.ui.screen
 
+
+
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.CardDefaults
+import androidx.compose.ui.text.style.TextOverflow
+import java.util.Locale
+import com.example.app_en_desarollo.ui.components.ImagenProducto
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.LaunchedEffect
@@ -69,6 +77,9 @@ fun CatalogoScreen(
     catalogoViewModel: CatalogoViewModel = viewModel()
 ){
     val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        catalogoViewModel.cargarProductos()
+    }
     var productoElegido by remember {
         mutableStateOf<ProductosModel?>(null)
     }
@@ -104,74 +115,67 @@ fun CatalogoScreen(
                     letterSpacing = 2.sp
                 )
                 Spacer(modifier = Modifier.height(24.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    FilterChip(
-                        selected = catalogoViewModel.seccionSeleccionada == "Menu",
-                        onClick = { catalogoViewModel.cambiarSeccion("Menu") },
-                        label = { Text("Menú") }
+                val secciones = listOf(
+                    "Packs" to "Packs",
+                    "Menu" to "Menú",
+                    "Reposteria" to "Repostería",
+                    "Bebestibles" to "Bebestibles"
+                )
+
+                val categorias = when (catalogoViewModel.seccionSeleccionada) {
+                    "Packs" -> listOf(
+                        "ESTANDAR" to "Estándar",
+                        "PREMIUM" to "Premium",
+                        "VEGETARIANO" to "Vegetariano",
+                        "PROMO" to "Promos"
                     )
-
-                    FilterChip(
-                        selected = catalogoViewModel.seccionSeleccionada == "Reposteria",
-                        onClick = { catalogoViewModel.cambiarSeccion("Reposteria") },
-                        label = { Text("Repostería") }
+                    "Reposteria" -> listOf(
+                        "Tarta" to "Tartas",
+                        "Galleta" to "Galletas",
+                        "Bizcocho" to "Bizcochos"
                     )
-
-                    if (catalogoViewModel.seccionSeleccionada == "Reposteria") {
-                        FilterChip(
-                            selected = catalogoViewModel.categoriaSeleccionada == "Tarta",
-                            onClick = { catalogoViewModel.cambiarCategoria("Tarta") },
-                            label = { Text("Tartas") }
-                        )
-
-                        FilterChip(
-                            selected = catalogoViewModel.categoriaSeleccionada == "Galleta",
-                            onClick = { catalogoViewModel.cambiarCategoria("Galleta") },
-                            label = { Text("Galletas") }
-                        )
-
-                        FilterChip(
-                            selected = catalogoViewModel.categoriaSeleccionada == "Bizcocho",
-                            onClick = { catalogoViewModel.cambiarCategoria("Bizcocho") },
-                            label = { Text("Bizcochos") }
-                        )
-                    } else {
-                        FilterChip(
-                            selected = catalogoViewModel.categoriaSeleccionada == "Entrada",
-                            onClick = { catalogoViewModel.cambiarCategoria("Entrada") },
-                            label = { Text("Entradas") }
-                        )
-
-                        FilterChip(
-                            selected = catalogoViewModel.categoriaSeleccionada == "Plato de fondo",
-                            onClick = {
-                                catalogoViewModel.cambiarCategoria("Plato de fondo")
-                            },
-                            label = { Text("Plato de fondo") }
-                        )
-
-                        FilterChip(
-                            selected = catalogoViewModel.categoriaSeleccionada == "Ensalada",
-                            onClick = { catalogoViewModel.cambiarCategoria("Ensalada") },
-                            label = { Text("Ensaladas") }
-                        )
-                    }
+                    "Bebestibles" -> listOf(
+                        "Jugo" to "Jugos",
+                        "Cafe" to "Café",
+                        "Limonada" to "Limonadas"
+                    )
+                    else -> listOf(
+                        "Entrada" to "Entradas",
+                        "Plato de fondo" to "Plato de fondo",
+                        "Ensalada" to "Ensaladas"
+                    )
                 }
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text="Selecciona los productos para tu evento\n" +
-                            "(Los productos a los que se le presione el corazon se" +
-                            "agregaran al evento)",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal,
-                    letterSpacing = 2.sp
+
+                FilaFiltros(
+                    opciones = secciones,
+                    seleccionado = catalogoViewModel.seccionSeleccionada,
+                    onSeleccion = {
+                        catalogoViewModel.cambiarSeccion(it)
+                        catalogoViewModel.cambiarCategoria("Todas")
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                FilaFiltros(
+                    opciones = listOf("Todas" to "Todas") + categorias,
+                    seleccionado = catalogoViewModel.categoriaSeleccionada,
+                    onSeleccion = { catalogoViewModel.cambiarCategoria(it) }
                 )
                 Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = "Toca el corazón de los productos que quieras agregar a tu evento",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color(0xFF5A1F33)
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                if (catalogoViewModel.cargando) {
+                    Text("Cargando...")
+                }
+                catalogoViewModel.error?.let {
+                    Text(text = it, fontSize = 13.sp, color = Color(0xFFD32F2F))
+                }
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
@@ -191,13 +195,13 @@ fun CatalogoScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Box {
-                                Image(
-                                    painter = painterResource(id = producto.imagen),
-                                    contentDescription = producto.nombre,
+                                ImagenProducto(
+                                    imagenUrl = producto.imagenUrl,
+                                    descripcion = producto.nombre,
+                                    fallback = producto.imagen,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(140.dp),
-                                    contentScale = ContentScale.Crop
+                                        .height(140.dp)
                                 )
 
                                 IconButton(
@@ -233,14 +237,15 @@ fun CatalogoScreen(
                                 modifier = Modifier.padding(12.dp)
                             )
 
-                            Text(
-                                text = "$" + producto.precio,
-                                modifier = Modifier.padding(
-                                    start = 12.dp,
-                                    end = 12.dp,
-                                    bottom = 12.dp
-                                )
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 12.dp, end = 12.dp, bottom = 12.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(text = "$" + producto.precio)
+                                Text(text = producto.descripcion, fontSize = 12.sp)
+                            }
                         }
                     }
                 }
@@ -340,7 +345,27 @@ fun CatalogoScreen(
     }
 
 }
-
+@Composable
+fun FilaFiltros(
+    opciones: List<Pair<String, String>>,
+    seleccionado: String,
+    onSeleccion: (String) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        opciones.forEach { (valor, etiqueta) ->
+            FilterChip(
+                selected = seleccionado == valor,
+                onClick = { onSeleccion(valor) },
+                label = { Text(etiqueta) }
+            )
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Composable

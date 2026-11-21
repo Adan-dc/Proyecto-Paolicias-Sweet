@@ -1,5 +1,5 @@
 package com.gabriel.paoliciasSweet.ui.screen
-
+import com.example.app_en_desarollo.ui.components.ImagenProducto
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.ui.layout.ContentScale
@@ -93,13 +93,13 @@ fun ProductosScreen(
                         containerColor = Color(0xFFFFE8EE)
                     )
                 ) {
-                    Image(
-                        painter = painterResource(id = producto.imagen),
-                        contentDescription = producto.nombre,
+                    ImagenProducto(
+                        imagenUrl = producto.imagenUrl,
+                        descripcion = producto.nombre,
+                        fallback = producto.imagen,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(220.dp),
-                        contentScale = ContentScale.Crop
+                            .height(220.dp)
                     )
 
                     Column(
@@ -121,7 +121,7 @@ fun ProductosScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = "Ingredientes orientativos:",
+                            text = if (producto.seccion == "Packs") "Incluye:" else "Ingredientes orientativos:",
                             fontWeight = FontWeight.SemiBold
                         )
 
@@ -144,13 +144,13 @@ fun ProductosScreen(
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Image(
-                                painter = painterResource(id = producto.imagen),
-                                contentDescription = producto.nombre,
+                            ImagenProducto(
+                                imagenUrl = producto.imagenUrl,
+                                descripcion = producto.nombre,
+                                fallback = producto.imagen,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(140.dp),
-                                contentScale = ContentScale.Crop
+                                    .height(140.dp)
                             )
 
                             Text(
