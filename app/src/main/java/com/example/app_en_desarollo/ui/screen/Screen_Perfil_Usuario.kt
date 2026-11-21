@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.app_en_desarollo.data.preferences.SesionBiometrica
+import com.example.app_en_desarollo.model.TipoUsuario
 import com.example.app_en_desarollo.ui.viewmodel.PerfilViewModel
 
 @Composable
@@ -54,7 +55,7 @@ fun infoPerfil(
     val state = viewModel.uiState
 
     LaunchedEffect(Unit){
-        viewModel.cargarUsuario(context)
+        viewModel.cargarPerfil(context)
     }
 
     Scaffold(
@@ -77,8 +78,7 @@ fun infoPerfil(
                 }
             )
         }
-    ) {
-            innerPadding ->
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -115,129 +115,143 @@ fun infoPerfil(
                             verticalArrangement = Arrangement.Center
                         ) {
 
-                            Text(
-                                text = "${state.nombre.ifBlank { "Sin Nombre" }}",
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            Spacer(modifier = Modifier.height(20.dp))
-
-                            Row() {
-
-                                Icon(
-                                    imageVector = Icons.Default.Business,
-                                    contentDescription = "Empresa"
-                                )
+                            if (state.tipoUsuario == TipoUsuario.CLIENTE) {
 
                                 Text(
-                                    text = "Empresa: ${state.empresa ?: "No registrada"}",
-                                    fontSize = 20.sp,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
+                                    text = state.nombre.ifBlank { "Sin Nombre" },
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                Spacer(modifier = Modifier.height(20.dp))
+
+                                Row {
+                                    Icon(
+                                        imageVector = Icons.Default.Contacts,
+                                        contentDescription = "Telefono"
+                                    )
+
+                                    Text(
+                                        text = "Teléfono: ${state.telefono.ifBlank { "No registrado" }}",
+                                        fontSize = 20.sp,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                Row {
+                                    Icon(
+                                        imageVector = Icons.Default.Email,
+                                        contentDescription = "Correo"
+                                    )
+
+                                    Text(
+                                        text = "Correo: ${state.email.ifBlank { "No registrado" }}",
+                                        fontSize = 20.sp,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+
+                            } else {
+
+                                Text(
+                                    text = state.razonSocial.ifBlank { "Sin Razón Social" },
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                Spacer(modifier = Modifier.height(20.dp))
+
+                                Row {
+                                    Icon(
+                                        imageVector = Icons.Default.Business,
+                                        contentDescription = "Empresa"
+                                    )
+
+                                    Text(
+                                        text = "RUT: ${state.rut.ifBlank { "No registrado" }}",
+                                        fontSize = 20.sp,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                Row {
+                                    Icon(
+                                        imageVector = Icons.Default.Contacts,
+                                        contentDescription = "Telefono"
+                                    )
+
+                                    Text(
+                                        text = "Teléfono: ${state.telefono.ifBlank { "No registrado" }}",
+                                        fontSize = 20.sp,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(32.dp))
+
+                            Button(
+                                onClick = {
+                                    SesionBiometrica.cerrarSesion(context)
+                                    onNavigateToLogin()
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp)
+                                    .shadow(8.dp, shape = CircleShape),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.White,
+                                    contentColor = Color.Black
+                                ),
+                                border = BorderStroke(2.dp, Color.White),
+                                shape = CircleShape
+                            ) {
+                                Text(
+                                    text = "Cerrar Sesión",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    letterSpacing = 2.sp
                                 )
                             }
 
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(32.dp))
 
-                            Row() {
-
-                                Icon(
-                                    imageVector = Icons.Default.Contacts,
-                                    contentDescription = "Telefono"
-                                )
-
+                            Button(
+                                onClick = {
+                                    if (SesionBiometrica.sesionVigente(context)) {
+                                        Toast.makeText(
+                                            context,
+                                            "Ya esta iniciada tu sesión",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        onNavigateToLogin()
+                                    }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp)
+                                    .shadow(8.dp, shape = CircleShape),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.White,
+                                    contentColor = Color.Black
+                                ),
+                                border = BorderStroke(2.dp, Color.White),
+                                shape = CircleShape
+                            ) {
                                 Text(
-                                    text = "Teléfono: ${state.telefono.ifBlank { "No registrado" }}",
-                                    fontSize = 20.sp,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            Row() {
-
-                                Icon(
-                                    imageVector = Icons.Default.Email,
-                                    contentDescription = "Correo"
-                                )
-
-                                Text(
-                                    text = "Correo: ${state.email.ifBlank { "No registrado" }}",
-                                    fontSize = 20.sp,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
+                                    text = "Iniciar Sesión",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    letterSpacing = 2.sp
                                 )
                             }
                         }
                     }
-
-                } else {
-                    Text(
-                        text = "Cargando datos del usuario..."
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                Button(
-                    onClick = {
-                        SesionBiometrica.cerrarSesion(context)
-                        onNavigateToLogin()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp)
-                        .shadow(8.dp, shape = CircleShape),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black
-                    ),
-                    border = BorderStroke(2.dp, Color.White),
-                    shape = CircleShape
-                ) {
-                    Text(
-                        text = "Cerrar Sesión",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = 2.sp
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                Button(
-                    onClick = {
-                        if(SesionBiometrica.sesionVigente(context)){
-                            Toast.makeText(
-                                context,
-                                "Ya esta iniciada tu sesión",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        else{
-                            onNavigateToLogin()
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp)
-                        .shadow(8.dp, shape = CircleShape),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black
-                    ),
-                    border = BorderStroke(2.dp, Color.White),
-                    shape = CircleShape
-                ) {
-                    Text(
-                        text = "Iniciar Sesión",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = 2.sp
-                    )
                 }
             }
         }

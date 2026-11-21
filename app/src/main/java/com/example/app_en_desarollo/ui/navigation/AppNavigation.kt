@@ -16,6 +16,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.app_en_desarollo.data.preferences.SesionBiometrica
+import com.example.app_en_desarollo.ui.components.FooterAdmin
+import com.example.app_en_desarollo.ui.screen.AdminProductosScreen
 import com.example.app_en_desarollo.ui.screen.CatalogoScreen
 import com.example.app_en_desarollo.ui.screen.FormularioRegistroCliente
 import com.example.app_en_desarollo.ui.screen.FormularioSesionCliente
@@ -23,6 +25,7 @@ import com.example.app_en_desarollo.ui.screen.InicioScreen
 import com.example.app_en_desarollo.ui.screen.ObservacionesScreen
 import com.example.app_en_desarollo.ui.screen.ReservaScreen
 import com.example.app_en_desarollo.ui.screen.ReservasRealizadasScreen
+import com.example.app_en_desarollo.ui.screen.ScreenTrabajador
 import com.example.app_en_desarollo.ui.screen.infoPerfil
 import com.example.app_en_desarollo.ui.viewmodel.CatalogoViewModel
 import com.example.app_en_desarollo.ui.viewmodel.ReservaViewModel
@@ -30,6 +33,8 @@ import com.gabriel.paoliciasSweet.ui.screen.ProductosScreen
 
 
 object Routes{
+
+    const val ADMIN_PRODUCTOS = "admin_productos"
 
     const val CATEGORIA = "categoria"
 
@@ -48,6 +53,8 @@ object Routes{
     const val RESERVAS_REALIZADAS = "reservas realizadas"
 
     const val LOGIN = "login"
+
+    const val ADMIN = "admin"
 }
 
 @Composable
@@ -72,14 +79,16 @@ fun AppNavigation(){
         exitTransition = { slideOutHorizontally(targetOffsetX = { -it / 3 }) + fadeOut() },
         popEnterTransition = { slideInHorizontally(initialOffsetX = { -it / 3 }) + fadeIn() },
         popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) + fadeOut() }
-    ){
-        composable(Routes.LOGIN){
-            FormularioSesionCliente (
+    ) {
+        composable(Routes.LOGIN) {
+            FormularioSesionCliente(
                 onNavigateToMenu = {
 
-                    reservaViewModel.setUsuario(SesionBiometrica.obtenerEmail(context)?: "")
+                    reservaViewModel.setUsuario(
+                        SesionBiometrica.obtenerIdentificador(context) ?: ""
+                    )
                     navController.navigate(Routes.INICIO) {
-                        popUpTo(Routes.LOGIN){
+                        popUpTo(Routes.LOGIN) {
                             inclusive = true
                         }
                         launchSingleTop = true
@@ -96,11 +105,14 @@ fun AppNavigation(){
                 },
                 onNavigateToPerfil = {
                     navegarFooter(Routes.PERFIL)
+                },
+                onNavigateToAdmin = {
+                    navegarFooter(Routes.ADMIN)
                 }
             )
         }
 
-        composable(Routes.REGISTER){
+        composable(Routes.REGISTER) {
             FormularioRegistroCliente(
                 onNavigateToSesion = {
                     navegarFooter(Routes.LOGIN)
@@ -120,7 +132,7 @@ fun AppNavigation(){
             )
         }
 
-        composable(Routes.PERFIL){
+        composable(Routes.PERFIL) {
             infoPerfil(
                 onNavigateToMenu = { navegarFooter(Routes.INICIO) },
                 onNavigateToCatalogo = { navegarFooter(Routes.CATALOGO) },
@@ -129,8 +141,8 @@ fun AppNavigation(){
                 },
                 onNavigateToLogin = {
                     reservaViewModel.setUsuario("")
-                    navController.navigate(Routes.LOGIN){
-                        popUpTo(navController.graph.startDestinationId){
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }
                         launchSingleTop = true
@@ -140,7 +152,7 @@ fun AppNavigation(){
         }
         composable(com.example.app_en_desarollo.ui.navigation.Routes.INICIO) {
             InicioScreen(
-                onNavigateToLogin = {navController.navigate(Routes.RESERVA)},
+                onNavigateToLogin = { navController.navigate(Routes.RESERVA) },
                 onNavigateToRegister = {},
                 onNavigateToMenu = {
                     catalogoViewModel.cambiarSeccion("Menu")
@@ -166,13 +178,13 @@ fun AppNavigation(){
                 onNavigateToReserva = {
                     navegarFooter(Routes.RESERVAS_REALIZADAS)
                 },
-                onNavigateToPerfil = {navegarFooter(Routes.PERFIL)}
+                onNavigateToPerfil = { navegarFooter(Routes.PERFIL) }
             )
         }
         composable(com.example.app_en_desarollo.ui.navigation.Routes.CATALOGO) {
             CatalogoScreen(
                 catalogoViewModel = catalogoViewModel,
-                onNavigateToLogin = {navController.navigate(Routes.RESERVA)},
+                onNavigateToLogin = { navController.navigate(Routes.RESERVA) },
                 onNavigateToRegister = {},
                 onNavigateToMenu = {},
                 onNavigateToInicio = {
@@ -216,7 +228,7 @@ fun AppNavigation(){
                     onNavigateToReserva = {
                         navegarFooter(Routes.RESERVAS_REALIZADAS)
                     },
-                    onNavigateToPerfil = {navegarFooter(Routes.PERFIL)},
+                    onNavigateToPerfil = { navegarFooter(Routes.PERFIL) },
                     onNavigateToProducto = { otroNombre ->
                         navController.navigate(
                             "producto/" + Uri.encode(otroNombre)
@@ -233,7 +245,7 @@ fun AppNavigation(){
                 Text(text = "Producto no encontrado")
             }
         }
-        composable(Routes.PERFIL){
+        composable(Routes.PERFIL) {
             infoPerfil(
                 onNavigateToMenu = {
                     navegarFooter(Routes.INICIO)
@@ -245,8 +257,8 @@ fun AppNavigation(){
                     navegarFooter(Routes.RESERVAS_REALIZADAS)
                 },
                 onNavigateToLogin = {
-                    navController.navigate(Routes.LOGIN){
-                        popUpTo(navController.graph.startDestinationId){
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }
                         launchSingleTop = true
@@ -254,44 +266,67 @@ fun AppNavigation(){
                 }
             )
         }
-        composable(Routes.RESERVA){
+        composable(Routes.RESERVA) {
             ReservaScreen(
                 onNavigateToObservaciones = { navController.navigate(Routes.OBSERVACIONES) },
-                onNavigateToCatalogo = {navegarFooter(Routes.CATALOGO)},
+                onNavigateToCatalogo = { navegarFooter(Routes.CATALOGO) },
                 onReservaConfirmada = { navegarFooter(Routes.RESERVAS_REALIZADAS) },
-                onNavigateToReservas = {navegarFooter(Routes.RESERVAS_REALIZADAS)},
-                onNavigateToInicio = {navegarFooter(Routes.INICIO)},
-                onNavigateToPerfil = {navegarFooter(Routes.PERFIL)},
+                onNavigateToReservas = { navegarFooter(Routes.RESERVAS_REALIZADAS) },
+                onNavigateToInicio = { navegarFooter(Routes.INICIO) },
+                onNavigateToPerfil = { navegarFooter(Routes.PERFIL) },
                 viewModel = reservaViewModel,
                 catalogoViewModel = catalogoViewModel
             )
         }
 
-        composable(Routes.OBSERVACIONES){
+        composable(Routes.OBSERVACIONES) {
             ObservacionesScreen(
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToInicio = {navegarFooter(Routes.INICIO)},
-                onNavigateToCatalogo = {navegarFooter(Routes.CATALOGO)},
-                onNavigateToReservas = {navegarFooter(Routes.RESERVAS_REALIZADAS)},
-                onNavigateToPerfil = {navegarFooter(Routes.PERFIL)},
+                onNavigateToInicio = { navegarFooter(Routes.INICIO) },
+                onNavigateToCatalogo = { navegarFooter(Routes.CATALOGO) },
+                onNavigateToReservas = { navegarFooter(Routes.RESERVAS_REALIZADAS) },
+                onNavigateToPerfil = { navegarFooter(Routes.PERFIL) },
                 viewModel = reservaViewModel
             )
         }
 
-        composable(Routes.RESERVAS_REALIZADAS){
+        composable(Routes.RESERVAS_REALIZADAS) {
             ReservasRealizadasScreen(
                 onNavigateToNuevaReserva = {
                     navController.navigate(Routes.RESERVA) {
                         popUpTo(Routes.RESERVAS_REALIZADAS) { inclusive = true }
                     }
                 },
-                onNavigateToInicio = {navegarFooter(Routes.INICIO)},
-                onNavigateToCatalogo = {navegarFooter(Routes.CATALOGO)},
-                onNavigateToPerfil = {navegarFooter(Routes.PERFIL)},
+                onNavigateToInicio = { navegarFooter(Routes.INICIO) },
+                onNavigateToCatalogo = { navegarFooter(Routes.CATALOGO) },
+                onNavigateToPerfil = { navegarFooter(Routes.PERFIL) },
                 viewModel = reservaViewModel
+            )
+        }
+        composable(Routes.ADMIN){
+            ScreenTrabajador(
+                onNavigateToLogin = {},
+                onNavigateToMenu = {},
+                onNavigateToCatalogo = {},
+                onNavigateToReserva = {},
+                onNavigateToProductos = { navegarFooter(Routes.ADMIN_PRODUCTOS) }
+            )
+        }
+
+        composable(Routes.ADMIN_PRODUCTOS){
+            AdminProductosScreen(
+                bottomBar = {
+                    FooterAdmin(
+                        onCalendarioClick = {},
+                        onProductosClick = {},
+                        onReservasClick = {},
+                        onCostoClick = {},
+                        onPersonalClick = { navegarFooter(Routes.ADMIN) },
+                        seleccionado = "Productos"
+                    )
+                }
             )
         }
     }
 }
-
 

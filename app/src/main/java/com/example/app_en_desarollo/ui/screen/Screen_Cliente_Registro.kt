@@ -1,11 +1,15 @@
 package com.example.app_en_desarollo.ui.screen
 
+import com.example.app_en_desarollo.ui.theme.Rojo
+import com.example.app_en_desarollo.ui.theme.RojoOscuro
+import com.example.app_en_desarollo.ui.components.Footer
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +21,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Apartment
 import androidx.compose.material.icons.filled.Contacts
+import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.filled.Domain
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -43,8 +49,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.app_en_desarollo.model.TipoUsuario
 import com.example.app_en_desarollo.ui.components.Footer
 import com.example.app_en_desarollo.ui.components.Header
+import com.example.app_en_desarollo.ui.theme.Rojo
+import com.example.app_en_desarollo.ui.theme.RojoOscuro
 import com.example.app_en_desarollo.ui.viewmodel.RegisterViewModel
 
 @Composable
@@ -64,28 +73,9 @@ fun FormularioRegistroCliente(
     val state = viewModel.uiState
 
     Scaffold(
-        topBar = { Header(title = "REGISTRO USUARIO") },
-        bottomBar = {
-            Footer(
-                onInicioClick = {
-                    onNavigateToMenu()
-                },
-
-                onCatalogoClick = {
-                    onNavigateToCategoria()
-                },
-
-                onReservaClick = {
-                    onNavigateToReserva()
-                },
-
-                onPerfilClick = {
-                    onNavigateToPerfil()
-                }
-            )
-        }
+        topBar = { Header(title = "REGISTRO GENERAL") }
     ) {
-        innerPadding ->
+            innerPadding ->
 
         Box(
             modifier = Modifier
@@ -104,52 +94,152 @@ fun FormularioRegistroCliente(
                     .verticalScroll(rememberScrollState())
             ) {
 
-                TextField(
-                    value = state.name,
-                    onValueChange = {
-                        viewModel.onNameChanged(it)
-                    },
-                    label = {
-                        Text("Nombre")
-                    },
-                    isError = state.nameError != null,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.AccountBox,
-                            contentDescription = "Contraseña"
-                        )
-                    },
-                    supportingText = {
-                        state.nameError?.let { mensaje -> Text(mensaje) }
-                    },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White
-                    )
+                Text(
+                    text = "Registrarse como",
+                    style = MaterialTheme.typography.titleMedium
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
 
-                //el nombre de la empresa es opcional y sin errores
-                TextField(
-                    value = state.empresa,
-                    onValueChange = {
-                        viewModel.onEmpresaChanged(it)
-                    },
-                    label = {
-                        Text("Opcional: Nombre Empresa")
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Domain,
-                            contentDescription = "Contraseña"
+                    Button(
+                        onClick = {
+                            viewModel.onTipoUsuarioChanged(TipoUsuario.CLIENTE)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor =
+                                if (state.tipoUsuario == TipoUsuario.CLIENTE) RojoOscuro else Rojo,
+                            contentColor = Color.White
                         )
-                    },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White
+                    ) {
+                        Text("Cliente")
+                    }
+
+                    Button(
+                        onClick = {
+                            viewModel.onTipoUsuarioChanged(TipoUsuario.EMPRESA)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor =
+                                if (state.tipoUsuario == TipoUsuario.EMPRESA) RojoOscuro else Rojo,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Empresa")
+                    }
+                }
+
+                if (state.tipoUsuario == TipoUsuario.CLIENTE) {
+                    TextField(
+                        value = state.name,
+                        onValueChange = {
+                            viewModel.onNameChanged(it)
+                        },
+                        label = {
+                            Text("Nombre")
+                        },
+                        isError = state.nameError != null,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.AccountBox,
+                                contentDescription = "Nombre"
+                            )
+                        },
+                        supportingText = {
+                            state.nameError?.let { mensaje -> Text(mensaje) }
+                        },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
+                        )
                     )
-                )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    TextField(
+                        value = state.email,
+                        onValueChange = {
+                            viewModel.onEmailChanged(it)
+                        },
+                        label = {
+                            Text("Correo")
+                        },
+                        isError = state.emailError != null,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = "Contraseña"
+                            )
+                        },
+                        supportingText = {
+                            state.emailError?.let { mensaje -> Text(mensaje) }
+                        },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
+                        )
+                    )
+
+
+                }
+                else{
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    TextField(
+                        value = state.rut,
+                        onValueChange = {
+                            viewModel.onRutChanged(it)
+                        },
+                        label = {
+                            Text("RUT de la empresa")
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Apartment,
+                                contentDescription = "rut"
+                            )
+                        },
+                        isError = state.rutError != null,
+                        supportingText = {
+                            state.rutError?.let { mensaje ->
+                                Text(mensaje)
+                            }
+                        },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    TextField(
+                        value = state.razonSocial,
+                        onValueChange = {
+                            viewModel.onRazonSocialChanged(it)
+                        },
+                        label = {
+                            Text("Rubro o razon social de la empresa")
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Dns,
+                                contentDescription = "razon"
+                            )
+                        },
+                        isError = state.razonSocialError != null,
+                        supportingText = {
+                            state.razonSocialError?.let { mensaje ->
+                                Text(mensaje)
+                            }
+                        },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
+                        )
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -165,38 +255,13 @@ fun FormularioRegistroCliente(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Contacts,
-                            contentDescription = "Contraseña"
+                            contentDescription = "telefono"
                         )
                     },
                     supportingText = {
                         state.telefonoError?.let { mensaje -> Text(mensaje) }
                     },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                TextField(
-                    value = state.email,
-                    onValueChange = {
-                        viewModel.onEmailChanged(it)
-                    },
-                    label = {
-                        Text("Correo")
-                    },
-                    isError = state.emailError != null,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = "Contraseña"
-                        )
-                    },
-                    supportingText = {
-                        state.emailError?.let { mensaje -> Text(mensaje) }
-                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White
