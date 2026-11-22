@@ -13,6 +13,9 @@ interface ReservaDao {
     suspend fun insertReserva(reserva: ReservaEntity)
 
 
+    @Query("UPDATE reservas SET comprobanteUri = :uri, estadoAbono = 'pendiente_validacion' WHERE id = :reservaId AND usuarioEmail = :email")
+    suspend fun guardarComprobante(reservaId: Int, email: String, uri: String): Int
+
     @Query("SELECT * FROM reservas WHERE usuarioEmail = :email ORDER BY id DESC")
     suspend fun getReservasPorUsuario(email: String): List<ReservaEntity>
 }

@@ -6,6 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.app_en_desarollo.data.local.dao.ClienteDao
 import com.example.app_en_desarollo.data.local.dao.EmpresaDao
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.app_en_desarollo.data.local.dao.ReservaDao
 import com.example.app_en_desarollo.data.local.dao.UsuarioDao
 import com.example.app_en_desarollo.data.local.entity.ClienteEntity
@@ -15,7 +17,7 @@ import com.example.app_en_desarollo.data.local.entity.UserEntity
 
 @Database(
     entities = [UserEntity::class, ReservaEntity::class, ClienteEntity::class, EmpresaEntity::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -30,6 +32,14 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
 
+        // Conserva las reservas anteriores al añadir el comprobante de abono.
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE reservas ADD COLUMN comprobanteUri TEXT NOT NULL DEFAULT ''")
+                db.execSQL("ALTER TABLE reservas ADD COLUMN estadoAbono TEXT NOT NULL DEFAULT 'sin_comprobante'")
+            }
+        }
+
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
@@ -42,6 +52,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "paolicias_sweet_database"
                 )
+                    .addMigrations(MIGRATION_2_3)
                     .fallbackToDestructiveMigration()
                     .build()
 

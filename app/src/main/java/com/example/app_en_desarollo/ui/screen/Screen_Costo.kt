@@ -32,6 +32,7 @@ import com.example.app_en_desarollo.ui.viewmodel.CostoViewModel
 fun ScreenCosto(
     onNavigateToDetalleCosto: () -> Unit,
     onNavigateToPersonal: () -> Unit,
+    onNavigateToProductos: () -> Unit,
     viewModel: CostoViewModel
 ) {
 
@@ -49,15 +50,7 @@ fun ScreenCosto(
 
         bottomBar = {
 
-            FooterAdmin(
-                onCalendarioClick = {},
-                onProductosClick = {},
-                onReservasClick = {},
-                onCostoClick = {},
-                onPersonalClick = {
-                    onNavigateToPersonal()
-                }
-            )
+            FooterAdmin(seleccionado = "Costo")
         }
 
     ) { innerPadding ->

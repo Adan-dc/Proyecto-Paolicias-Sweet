@@ -35,6 +35,7 @@ import java.util.Locale
 @Composable
 fun ResumenCostoScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToProductos: () -> Unit,
     onNavigateToPersonal: () -> Unit,
     viewModel: CostoViewModel
 ) {
@@ -49,15 +50,7 @@ fun ResumenCostoScreen(
         },
 
         bottomBar = {
-            FooterAdmin(
-                onCalendarioClick = {},
-                onProductosClick = {},
-                onReservasClick = {},
-                onCostoClick = {},
-                onPersonalClick = {
-                    onNavigateToPersonal()
-                }
-            )
+            FooterAdmin(seleccionado = "Costo")
         }
 
     ) { innerPadding ->

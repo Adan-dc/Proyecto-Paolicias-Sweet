@@ -6,5 +6,6 @@ data class ReservaGuardada(
     val fecha: String,
     val hora: String,
     val asistentes: Int,
-    val tieneObservaciones: Boolean
+    val tieneObservaciones: Boolean,
+    val estadoAbono: String = "sin_comprobante"
 )

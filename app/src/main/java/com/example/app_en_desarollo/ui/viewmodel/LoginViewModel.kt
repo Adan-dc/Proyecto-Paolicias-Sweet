@@ -1,6 +1,7 @@
 package com.example.app_en_desarollo.ui.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,7 +17,7 @@ import com.example.app_en_desarollo.model.EmpresaResponse
 import com.example.app_en_desarollo.model.LoginModel
 import com.example.app_en_desarollo.model.LoginRequest
 import com.example.app_en_desarollo.model.TipoUsuario
-import com.example.app_en_desarollo.network.RetrofitClient
+import com.example.app_en_desarollo.data.api.RetrofitGeneral
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -170,6 +171,11 @@ class LoginViewModel : ViewModel() {
                 uiState = uiState.copy(rutError = "Se debe INGRESAR el RUT")
                 return
             }
+
+            if (!Regex("^\\d{1,2}(\\.?\\d{3}){2}-[0-9kK]$").matches(state.rut.trim())) {
+                uiState = uiState.copy(rutError = "El RUT debe tener formato 12.345.678-9")
+                return
+            }
         }
 
         if (state.password.isBlank()) {
@@ -182,7 +188,7 @@ class LoginViewModel : ViewModel() {
                 val db = AppDatabase.getDatabase(context)
 
                 if (state.tipoUsuario == TipoUsuario.CLIENTE) {
-                    val cliente = RetrofitClient.clienteApi.login(
+                    val cliente = RetrofitGeneral.clienteApi.login(
                         LoginRequest(state.email, state.password)
                     )
                     guardarClienteLocal(db, cliente, state.password)
@@ -191,7 +197,7 @@ class LoginViewModel : ViewModel() {
                     loginCorrecto()
                     onSuccess(tipo)
                 } else {
-                    val empresa = RetrofitClient.empresaApi.login(
+                    val empresa = RetrofitGeneral.empresaApi.login(
                         EmpresaLoginRequest(state.rut, state.password)
                     )
                     guardarEmpresaLocal(db, empresa, state.password)
@@ -206,6 +212,7 @@ class LoginViewModel : ViewModel() {
                     uiState = uiState.copy(errorMessage = "Error del servidor, intenta más tarde.")
                 }
             } catch (e: Exception) {
+                Log.e("LOGIN", "fallo el login", e)
                 uiState = uiState.copy(errorMessage = "No se pudo conectar con el servidor.")
             }
         }

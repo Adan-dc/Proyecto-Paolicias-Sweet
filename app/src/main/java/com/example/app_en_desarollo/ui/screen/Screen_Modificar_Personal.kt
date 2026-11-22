@@ -44,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 fun ModificarTrabajadorScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToProductos: () -> Unit,
     onNavigateToCosto: () -> Unit,
     viewModel: TrabajadorViewModel
 ) {
@@ -70,17 +71,7 @@ fun ModificarTrabajadorScreen(
         },
 
         bottomBar = {
-            FooterAdmin(
-                onCalendarioClick = {},
-                onProductosClick = {},
-                onReservasClick = {},
-                onCostoClick = {
-                    onNavigateToCosto()
-                },
-                onPersonalClick = {
-                    onNavigateBack()
-                }
-            )
+            FooterAdmin(seleccionado = "Personal")
         }
 
     ) { innerPadding ->

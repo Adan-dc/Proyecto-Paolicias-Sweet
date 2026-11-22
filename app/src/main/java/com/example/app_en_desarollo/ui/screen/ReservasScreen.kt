@@ -21,10 +21,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -124,6 +126,21 @@ fun ReservaScreen(
                     .background(Color(0xFFFFF8F6))
                     .padding(horizontal = 16.dp, vertical = 6.dp)
             ) {
+
+                OutlinedTextField(
+                    value = state.tipoEvento,
+                    onValueChange = {
+                        viewModel.onTipoEventoChanged(it)
+                    },
+                    label = { Text("Tipo de evento") },
+                    placeholder = { Text("Ej: Cumpleaños, Matrimonio, Bautizo") },
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    shape = RoundedCornerShape(12.dp)
+                )
+
                 FilaOpcion(checked = state.fechaValida, label = "Fecha") {
                     CampoTexto(
                         value = state.fecha,
@@ -148,12 +165,27 @@ fun ReservaScreen(
 
                 FilaOpcion(checked = state.asistentesValido, label = "Cantidad de asistentes") {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        CampoTexto(
-                            value = state.asistentes,
-                            onValueChange = { viewModel.onAsistentesChanged(it) },
-                            placeholder = "0",
-                            modifier = Modifier.width(32.dp)
+                        IconButton(
+                            onClick = { viewModel.onDisminuirAsistentesClick() },
+                            enabled = (state.asistentes.toIntOrNull() ?: 0) > 0,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Text("−", fontSize = 23.sp, color = Color(0xFFA63A5B))
+                        }
+                        Text(
+                            text = state.asistentes.ifEmpty { "0" },
+                            fontSize = 14.sp,
+                            textAlign = TextAlign.Center,
+                            color = Color(0xFF5A1F33),
+                            modifier = Modifier.width(28.dp)
                         )
+                        IconButton(
+                            onClick = { viewModel.onIncrementarAsistentesClick() },
+                            enabled = (state.asistentes.toIntOrNull() ?: 0) < MAX_ASISTENTES,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Text("+", fontSize = 22.sp, color = Color(0xFFA63A5B))
+                        }
                         Text(text = "/$MAX_ASISTENTES", fontSize = 13.sp, color = Color(0xFF8A6A72))
                     }
                 }
@@ -190,6 +222,7 @@ fun ReservaScreen(
             val monto = NumberFormat
                 .getIntegerInstance(Locale.forLanguageTag("es-CL"))
                 .format(state.cotizacion + catalogoViewModel.totalProductos)
+
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))
@@ -217,8 +250,8 @@ fun ReservaScreen(
 
             Button(
                 onClick = {
-                    viewModel.onConfirmarReservaClick(context) {
-                        Toast.makeText(
+                    viewModel.onConfirmarReservaClick(catalogoViewModel) {
+                    Toast.makeText(
                             context,
                             "¡Reserva confirmada!",
                             Toast.LENGTH_SHORT
