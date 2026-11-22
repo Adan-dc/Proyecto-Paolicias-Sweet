@@ -18,6 +18,10 @@ interface TrabajadorApi {
     @PUT("api/v1/trabajadores/{idTrabajador}/asignacion")
     suspend fun asignarEvento(@Path ("idTrabajador") idTrabajador: Long, @Body datos: Map<String, Long>): TrabajadorModel
 
+
+    @PUT("api/v1/trabajadores/{idTrabajador}/cancelar-asignacion")
+    suspend fun cancelarAsignacion(@Path("idTrabajador") idTrabajador: Long): TrabajadorModel
+
     @PUT("api/v1/trabajadores/{id}")
     suspend fun actualizarTrabajador(@Path ("id") id: Long, @Body trabajador: TrabajadorModel): TrabajadorModel
 
