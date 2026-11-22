@@ -5,29 +5,26 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitGeneral {
 
-    private const val IP = "192.168.1.53"
+    private const val IP = "server.greengea.cl"
 
     private val retrofitTrabajadores by lazy {
         Retrofit.Builder()
-            .baseUrl("http://$IP:8092/")
+            .baseUrl("https://server.greengea.cl/paolicias/trabajadores/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
     private val retrofitReservas by lazy {
         Retrofit.Builder()
-            .baseUrl("http://$IP:8081/")
+            .baseUrl("https://server.greengea.cl/paolicias/reservas/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
     private val retrofitCosto by lazy {
-
         Retrofit.Builder()
-            .baseUrl("http://$IP:8093/")
-            .addConverterFactory(
-                GsonConverterFactory.create()
-            )
+            .baseUrl("https://server.greengea.cl/paolicias/costo/")
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
