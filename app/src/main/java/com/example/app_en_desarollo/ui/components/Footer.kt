@@ -124,6 +124,7 @@ fun FooterAdmin(
     onReservasClick: () -> Unit,
     onCostoClick: () -> Unit,
     onPersonalClick: () -> Unit,
+    seleccionado: String = "",
     copyrightText: String = "© 2026 Paolicias-Sweet. Derechos reservados MAG.",
     backgroundColor: Color = Color(0xFF1B1B1B),
     textColor: Color = Color.Gray
@@ -135,7 +136,7 @@ fun FooterAdmin(
     ){
         NavigationBar {
             NavigationBarItem(
-                selected = false,
+                selected = seleccionado == "Calendario",
                 onClick = { onCalendarioClick() },
                 icon = {
                     Icon(
@@ -150,7 +151,7 @@ fun FooterAdmin(
             )
 
             NavigationBarItem(
-                selected = false,
+                selected = seleccionado == "Productos",
                 onClick = { onProductosClick() },
                 icon = {
                     Icon(
@@ -164,7 +165,7 @@ fun FooterAdmin(
                 }
             )
             NavigationBarItem(
-                selected = false,
+                selected = seleccionado == "Costo",
                 onClick = { onCostoClick() },
                 icon = {
                     Icon(
@@ -179,7 +180,7 @@ fun FooterAdmin(
             )
 
             NavigationBarItem(
-                selected = false,
+                selected = seleccionado == "Reserva",
                 onClick = { onReservasClick() },
                 icon = {
                     Icon(
@@ -194,7 +195,7 @@ fun FooterAdmin(
             )
 
             NavigationBarItem(
-                selected = false,
+                selected = seleccionado == "Personal",
                 onClick = { onPersonalClick() },
                 icon = {
                     Icon(

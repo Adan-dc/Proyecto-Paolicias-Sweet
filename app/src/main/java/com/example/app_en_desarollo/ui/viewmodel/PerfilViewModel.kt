@@ -35,7 +35,7 @@ class PerfilViewModel : ViewModel() {
                 return@launch
 
             }
-            if (tipoUsuario == TipoUsuario.CLIENTE) {
+            if (tipoUsuario == TipoUsuario.CLIENTE || tipoUsuario == TipoUsuario.ADMIN) {
 
                 val cliente =
                     db.clienteDao().buscarPorEmail(identificador)

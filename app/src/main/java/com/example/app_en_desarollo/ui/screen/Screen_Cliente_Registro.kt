@@ -1,5 +1,8 @@
 package com.example.app_en_desarollo.ui.screen
 
+import com.example.app_en_desarollo.ui.theme.Rojo
+import com.example.app_en_desarollo.ui.theme.RojoOscuro
+import com.example.app_en_desarollo.ui.components.Footer
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -49,6 +52,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.app_en_desarollo.model.TipoUsuario
 import com.example.app_en_desarollo.ui.components.Footer
 import com.example.app_en_desarollo.ui.components.Header
+import com.example.app_en_desarollo.ui.theme.Rojo
+import com.example.app_en_desarollo.ui.theme.RojoOscuro
 import com.example.app_en_desarollo.ui.viewmodel.RegisterViewModel
 
 @Composable
@@ -68,28 +73,9 @@ fun FormularioRegistroCliente(
     val state = viewModel.uiState
 
     Scaffold(
-        topBar = { Header(title = "REGISTRO GENERAL") },
-        bottomBar = {
-            Footer(
-                onInicioClick = {
-                    onNavigateToMenu()
-                },
-
-                onCatalogoClick = {
-                    onNavigateToCategoria()
-                },
-
-                onReservaClick = {
-                    onNavigateToReserva()
-                },
-
-                onPerfilClick = {
-                    onNavigateToPerfil()
-                }
-            )
-        }
+        topBar = { Header(title = "REGISTRO GENERAL") }
     ) {
-        innerPadding ->
+            innerPadding ->
 
         Box(
             modifier = Modifier
@@ -123,10 +109,8 @@ fun FormularioRegistroCliente(
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor =
-                                if (state.tipoUsuario == TipoUsuario.CLIENTE)
-                                    MaterialTheme.colorScheme.primary
-                                else
-                                    MaterialTheme.colorScheme.secondary
+                                if (state.tipoUsuario == TipoUsuario.CLIENTE) RojoOscuro else Rojo,
+                            contentColor = Color.White
                         )
                     ) {
                         Text("Cliente")
@@ -138,10 +122,8 @@ fun FormularioRegistroCliente(
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor =
-                                if (state.tipoUsuario == TipoUsuario.EMPRESA)
-                                    MaterialTheme.colorScheme.primary
-                                else
-                                    MaterialTheme.colorScheme.secondary
+                                if (state.tipoUsuario == TipoUsuario.EMPRESA) RojoOscuro else Rojo,
+                            contentColor = Color.White
                         )
                     ) {
                         Text("Empresa")

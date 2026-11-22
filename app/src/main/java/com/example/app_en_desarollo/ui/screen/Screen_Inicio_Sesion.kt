@@ -1,5 +1,6 @@
 package com.example.app_en_desarollo.ui.screen
-
+import com.example.app_en_desarollo.ui.theme.Rojo
+import com.example.app_en_desarollo.ui.theme.RojoOscuro
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -98,28 +99,9 @@ fun FormularioSesionCliente(
     )
 
     Scaffold(
-        topBar = { Header(title = "INICIO SESIÓN") },
-        bottomBar = {
-            Footer(
-                onInicioClick = {
-                    onNavigateToMenu()
-                },
-
-                onCatalogoClick = {
-                    onNavigateToCatalogo()
-                },
-
-                onReservaClick = {
-                    onNavigateToReserva()
-                },
-
-                onPerfilClick = {
-                    onNavigateToPerfil()
-                }
-            )
-        }
+        topBar = { Header(title = "INICIO SESIÓN") }
     ) {
-        innerPadding ->
+            innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -152,7 +134,6 @@ fun FormularioSesionCliente(
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
-
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
@@ -160,7 +141,12 @@ fun FormularioSesionCliente(
                     Button(
                         onClick = {
                             viewModel.onTipoUsuarioChanged(TipoUsuario.CLIENTE)
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor =
+                                if (state.tipoUsuario == TipoUsuario.CLIENTE) RojoOscuro else Rojo,
+                            contentColor = Color.White
+                        )
                     ) {
                         Text("Cliente")
                     }
@@ -168,8 +154,12 @@ fun FormularioSesionCliente(
                     Button(
                         onClick = {
                             viewModel.onTipoUsuarioChanged(TipoUsuario.EMPRESA)
-                            onNavigateToAdmin()
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor =
+                                if (state.tipoUsuario == TipoUsuario.EMPRESA) RojoOscuro else Rojo,
+                            contentColor = Color.White
+                        )
                     ) {
                         Text("Empresa")
                     }
@@ -267,16 +257,16 @@ fun FormularioSesionCliente(
                     onClick = {
                         viewModel.onLoginClick(
                             context = context,
-                            onSuccess = {
+                            onSuccess = { tipoRecibido ->
 
                                 SesionBiometrica.guardarSesion(
                                     context = context,
                                     identificador =
-                                        if(state.tipoUsuario == TipoUsuario.CLIENTE)
-                                            state.email
+                                        if(tipoRecibido == TipoUsuario.EMPRESA)
+                                            state.rut
                                         else
-                                            state.rut,
-                                    tipoUsuario = state.tipoUsuario
+                                            state.email,
+                                    tipoUsuario = tipoRecibido
                                 )
 
                                 Toast.makeText(
@@ -287,7 +277,11 @@ fun FormularioSesionCliente(
 
                                 vibrarTelefono(context)
 
-                                onNavigateToMenu()
+                                if (tipoRecibido == TipoUsuario.ADMIN) {
+                                    onNavigateToAdmin()
+                                } else {
+                                    onNavigateToMenu()
+                                }
                             }
                         )
                     },
