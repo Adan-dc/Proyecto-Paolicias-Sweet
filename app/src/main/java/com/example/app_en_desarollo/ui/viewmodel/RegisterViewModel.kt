@@ -10,7 +10,7 @@ import com.example.app_en_desarollo.model.ClienteModel
 import com.example.app_en_desarollo.model.EmpresaModel
 import com.example.app_en_desarollo.model.RegisterModel
 import com.example.app_en_desarollo.model.TipoUsuario
-import com.example.app_en_desarollo.network.RetrofitClient
+import com.example.app_en_desarollo.data.api.RetrofitGeneral
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -26,6 +26,9 @@ class RegisterViewModel : ViewModel() {
         )
     }
 
+    private fun rutEsValido(rut: String): Boolean {
+        return Regex("^\\d{1,2}(\\.?\\d{3}){2}-[0-9kK]$").matches(rut.trim())
+    }
     fun onRutChanged(rut: String) {
         uiState = uiState.copy(
             rut = rut,
@@ -136,6 +139,11 @@ class RegisterViewModel : ViewModel() {
                 return
             }
 
+            if (!rutEsValido(state.rut)) {
+                uiState = uiState.copy(rutError = "El RUT debe tener formato 12.345.678-9")
+                return
+            }
+
             if (state.razonSocial.isBlank()) {
                 uiState = uiState.copy(razonSocialError = "Debe COLOCAR el RUBRO DE LA EMPRESA")
                 return
@@ -145,7 +153,7 @@ class RegisterViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 if (state.tipoUsuario == TipoUsuario.CLIENTE) {
-                    RetrofitClient.clienteApi.registrar(
+                    RetrofitGeneral.clienteApi.registrar(
                         ClienteModel(
                             nombre = state.name,
                             telefono = state.telefono,
@@ -154,7 +162,7 @@ class RegisterViewModel : ViewModel() {
                         )
                     )
                 } else {
-                    RetrofitClient.empresaApi.registrar(
+                    RetrofitGeneral.empresaApi.registrar(
                         EmpresaModel(
                             rut = state.rut,
                             razonSocial = state.razonSocial,

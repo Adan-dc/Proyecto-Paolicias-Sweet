@@ -41,6 +41,7 @@ import com.example.app_en_desarollo.ui.viewmodel.ReservaViewModel
 @Composable
 fun ReservasRealizadasScreen(
     onNavigateToNuevaReserva: () -> Unit,
+    onNavigateToTransferencia: (Int) -> Unit = {},
     onNavigateToInicio: () -> Unit = {},
     onNavigateToCatalogo: () -> Unit = {},
     onNavigateToReservas: () -> Unit = {},
@@ -49,7 +50,8 @@ fun ReservasRealizadasScreen(
 ){
     val state = viewModel.uiState
     val context = LocalContext.current
-    LaunchedEffect(Unit) { viewModel.cargarReservas(context) }
+    LaunchedEffect(Unit) { viewModel.cargarReservasBackend() }
+
 
     Scaffold(
         containerColor = Color(0xFFFBE9EC),
@@ -82,8 +84,17 @@ fun ReservasRealizadasScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
+            item {
+                state.errorMessage?.let { mensaje ->
+                    Text(
+                        text = mensaje,
+                        color = Color.Red,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+                }
+            }
             items(state.reservasGuardadas){ reserva ->
-                TarjetaReserva(reserva)
+                TarjetaReserva(reserva, onNavigateToTransferencia)
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
@@ -107,7 +118,7 @@ fun ReservasRealizadasScreen(
 
 
 @Composable
-private fun TarjetaReserva(reserva: ReservaGuardada){
+private fun TarjetaReserva(reserva: ReservaGuardada, onNavigateToTransferencia: (Int) -> Unit){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -136,6 +147,20 @@ private fun TarjetaReserva(reserva: ReservaGuardada){
             Text(text = "Horario: ${reserva.hora}", fontSize = 12.sp, color=gris)
             Text(text = "Cantidad de invitados: ${reserva.asistentes}", fontSize = 12.sp, color=gris)
             Text(text = "Observaciones especiales: ${if (reserva.tieneObservaciones) "SI" else "NO"} ", fontSize = 12.sp, color=gris)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = if (reserva.estadoAbono == "pendiente_validacion") "Abono: pendiente de validación" else "Abono: sin comprobante",
+                fontSize = 12.sp,
+                color = Color(0xFF5A1F33)
+            )
+            Button(
+                onClick = { onNavigateToTransferencia(reserva.id) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA63A5B)),
+                shape = RoundedCornerShape(24.dp)
+            ) {
+                Text(if (reserva.estadoAbono == "pendiente_validacion") "Actualizar comprobante" else "Adjuntar transferencia electrónica")
+            }
         }
     }
 }

@@ -36,6 +36,7 @@ import com.example.app_en_desarollo.ui.viewmodel.TrabajadorViewModel
 @Composable
 fun CrearTrabajadorScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToProductos: () -> Unit,
     onNavigateToCosto: () -> Unit,
     viewModel: TrabajadorViewModel
 ) {
@@ -52,17 +53,7 @@ fun CrearTrabajadorScreen(
             Header(title = "DETALLE PERSONAL")
         },
         bottomBar = {
-            FooterAdmin(
-                onCalendarioClick = {},
-                onProductosClick = {},
-                onReservasClick = {},
-                onCostoClick = {
-                    onNavigateToCosto()
-                },
-                onPersonalClick = {
-                    onNavigateBack()
-                }
-            )
+            FooterAdmin(seleccionado = "Personal")
         }
     ) { innerPadding ->
 

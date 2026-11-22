@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app_en_desarollo.model.IngredienteRequest
 import com.example.app_en_desarollo.model.IngredienteResponse
-import com.example.app_en_desarollo.network.RetrofitClient
+import com.example.app_en_desarollo.data.api.RetrofitGeneral
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -26,7 +26,7 @@ class AdminIngredientesViewModel : ViewModel() {
     fun cargar() {
         viewModelScope.launch {
             try {
-                ingredientes = RetrofitClient.ingredienteApi.listar()
+                ingredientes = RetrofitGeneral.ingredienteApi.listar()
             } catch (e: Exception) {
                 mensaje = "No se pudieron cargar los ingredientes"
             }
@@ -49,12 +49,12 @@ class AdminIngredientesViewModel : ViewModel() {
                 )
 
                 if (id == null) {
-                    RetrofitClient.ingredienteApi.crear(request)
+                    RetrofitGeneral.ingredienteApi.crear(request)
                 } else {
-                    RetrofitClient.ingredienteApi.actualizar(id, request)
+                    RetrofitGeneral.ingredienteApi.actualizar(id, request)
                 }
 
-                ingredientes = RetrofitClient.ingredienteApi.listar()
+                ingredientes = RetrofitGeneral.ingredienteApi.listar()
                 onListo()
             } catch (e: Exception) {
                 mensaje = "No se pudo guardar el ingrediente"
@@ -65,8 +65,8 @@ class AdminIngredientesViewModel : ViewModel() {
     fun eliminar(id: Long) {
         viewModelScope.launch {
             try {
-                RetrofitClient.ingredienteApi.eliminar(id)
-                ingredientes = RetrofitClient.ingredienteApi.listar()
+                RetrofitGeneral.ingredienteApi.eliminar(id)
+                ingredientes = RetrofitGeneral.ingredienteApi.listar()
             } catch (e: HttpException) {
                 mensaje = if (e.code() == 409) {
                     "No se puede eliminar, el ingrediente esta en uso en un producto"

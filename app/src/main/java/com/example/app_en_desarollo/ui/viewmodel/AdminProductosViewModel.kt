@@ -10,7 +10,7 @@ import com.example.app_en_desarollo.model.CategoriaResponse
 import com.example.app_en_desarollo.model.IngredienteResponse
 import com.example.app_en_desarollo.model.ProductoRequest
 import com.example.app_en_desarollo.model.ProductoResponse
-import com.example.app_en_desarollo.network.RetrofitClient
+import com.example.app_en_desarollo.data.api.RetrofitGeneral
 import com.example.app_en_desarollo.network.subirImagen
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -47,13 +47,13 @@ class AdminProductosViewModel : ViewModel() {
         viewModelScope.launch {
             cargando = true
             try {
-                productos = RetrofitClient.productoApi.listar()
-                categorias = RetrofitClient.categoriaApi.listar()
+                productos = RetrofitGeneral.productoApi.listar()
+                categorias = RetrofitGeneral.categoriaApi.listar()
             } catch (e: Exception) {
                 mensaje = "No se pudieron cargar los productos"
             }
             try {
-                ingredientesDisponibles = RetrofitClient.ingredienteApi.listar()
+                ingredientesDisponibles = RetrofitGeneral.ingredienteApi.listar()
             } catch (e: Exception) {
                 mensaje = "No se pudieron cargar los ingredientes"
             }
@@ -86,9 +86,9 @@ class AdminProductosViewModel : ViewModel() {
                 )
 
                 val guardado = if (id == null) {
-                    RetrofitClient.productoApi.crear(request)
+                    RetrofitGeneral.productoApi.crear(request)
                 } else {
-                    RetrofitClient.productoApi.actualizar(id, request)
+                    RetrofitGeneral.productoApi.actualizar(id, request)
                 }
 
                 val idsOriginales = productoOriginal?.ingredientes
@@ -97,13 +97,13 @@ class AdminProductosViewModel : ViewModel() {
 
                 idsOriginales
                     .filter { it !in idsNuevos }
-                    .forEach { RetrofitClient.productoApi.quitarIngrediente(guardado.id, it) }
+                    .forEach { RetrofitGeneral.productoApi.quitarIngrediente(guardado.id, it) }
 
                 ingredientes.forEach {
-                    RetrofitClient.productoApi.agregarIngrediente(guardado.id, it.id, it.cantidad)
+                    RetrofitGeneral.productoApi.agregarIngrediente(guardado.id, it.id, it.cantidad)
                 }
 
-                productos = RetrofitClient.productoApi.listar()
+                productos = RetrofitGeneral.productoApi.listar()
                 onListo()
             } catch (e: Exception) {
                 mensaje = "No se pudo guardar el producto"
@@ -114,8 +114,8 @@ class AdminProductosViewModel : ViewModel() {
     fun eliminar(id: Long) {
         viewModelScope.launch {
             try {
-                RetrofitClient.productoApi.eliminar(id)
-                productos = RetrofitClient.productoApi.listar()
+                RetrofitGeneral.productoApi.eliminar(id)
+                productos = RetrofitGeneral.productoApi.listar()
             } catch (e: HttpException) {
                 mensaje = if (e.code() == 409) {
                     "No se puede eliminar, el producto esta en un pack"

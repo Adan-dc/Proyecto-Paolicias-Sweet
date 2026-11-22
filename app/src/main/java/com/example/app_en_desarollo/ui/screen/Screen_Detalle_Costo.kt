@@ -42,6 +42,7 @@ fun DetalleCostoScreen(
     onNavigateBack: () -> Unit,
     onNavigateToResumenCosto: () -> Unit,
     onNavigateToPersonal: () -> Unit,
+    onNavigateToProductos: () -> Unit,
     viewModel: CostoViewModel
 ) {
 
@@ -57,17 +58,7 @@ fun DetalleCostoScreen(
         },
 
         bottomBar = {
-            FooterAdmin(
-                onCalendarioClick = {},
-                onProductosClick = {},
-                onReservasClick = {},
-                onCostoClick = {
-                    onNavigateBack()
-                },
-                onPersonalClick = {
-                    onNavigateToPersonal()
-                }
-            )
+            FooterAdmin(seleccionado = "Costo")
         }
     ) { innerPadding ->
 

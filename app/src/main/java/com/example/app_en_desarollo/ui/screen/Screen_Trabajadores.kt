@@ -89,27 +89,7 @@ fun ScreenTrabajador(
     Scaffold(
         topBar = { Header(title = "PERSONAL") },
         bottomBar = {
-            FooterAdmin(
-                onCalendarioClick = {
-
-                },
-
-                onProductosClick = {
-
-                },
-
-                onReservasClick = {
-
-                },
-
-                onCostoClick = {
-                    onNavigateToCosto()
-                },
-
-                onPersonalClick = {
-
-                }
-            )
+            FooterAdmin(seleccionado = "Personal")
         }
     ) { innerPadding ->
         Box(

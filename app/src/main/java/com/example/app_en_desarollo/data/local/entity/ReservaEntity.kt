@@ -1,5 +1,6 @@
 package com.example.app_en_desarollo.data.local.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -14,5 +15,9 @@ data class ReservaEntity(
     val hora: String,
     val asistentes: Int,
     val tieneObservaciones: Boolean,
-    val observaciones: String
+    val observaciones: String,
+    @ColumnInfo(defaultValue = "''")
+    val comprobanteUri: String = "",
+    @ColumnInfo(defaultValue = "'sin_comprobante'")
+    val estadoAbono: String = "sin_comprobante"
 )

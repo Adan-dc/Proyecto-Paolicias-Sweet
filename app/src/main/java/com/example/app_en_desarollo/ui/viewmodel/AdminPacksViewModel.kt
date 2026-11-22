@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.app_en_desarollo.model.PackRequest
 import com.example.app_en_desarollo.model.PackResponse
 import com.example.app_en_desarollo.model.ProductoResponse
-import com.example.app_en_desarollo.network.RetrofitClient
+import com.example.app_en_desarollo.data.api.RetrofitGeneral
 import com.example.app_en_desarollo.network.subirImagen
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -48,12 +48,12 @@ class AdminPacksViewModel : ViewModel() {
     fun cargar() {
         viewModelScope.launch {
             try {
-                packs = RetrofitClient.packApi.listar()
+                packs = RetrofitGeneral.packApi.listar()
             } catch (e: Exception) {
                 mensaje = "No se pudieron cargar los packs"
             }
             try {
-                productosDisponibles = RetrofitClient.productoApi.listar()
+                productosDisponibles = RetrofitGeneral.productoApi.listar()
             } catch (e: Exception) {
                 mensaje = "No se pudieron cargar los productos"
             }
@@ -93,9 +93,9 @@ class AdminPacksViewModel : ViewModel() {
                 )
 
                 val guardado = if (id == null) {
-                    RetrofitClient.packApi.crear(request)
+                    RetrofitGeneral.packApi.crear(request)
                 } else {
-                    RetrofitClient.packApi.actualizar(id, request)
+                    RetrofitGeneral.packApi.actualizar(id, request)
                 }
 
                 val idsOriginales: List<Long> = packOriginal?.productos
@@ -104,13 +104,13 @@ class AdminPacksViewModel : ViewModel() {
 
                 idsOriginales
                     .filter { it !in idsNuevos }
-                    .forEach { RetrofitClient.packApi.quitarProducto(guardado.id, it) }
+                    .forEach { RetrofitGeneral.packApi.quitarProducto(guardado.id, it) }
 
                 productos.forEach {
-                    RetrofitClient.packApi.agregarProducto(guardado.id, it.id, it.cantidad, it.grupo)
+                    RetrofitGeneral.packApi.agregarProducto(guardado.id, it.id, it.cantidad, it.grupo)
                 }
 
-                packs = RetrofitClient.packApi.listar()
+                packs = RetrofitGeneral.packApi.listar()
                 onListo()
             } catch (e: Exception) {
                 mensaje = "No se pudo guardar el pack"
@@ -129,8 +129,8 @@ class AdminPacksViewModel : ViewModel() {
                     personas = pack.personas,
                     activo = activo
                 )
-                RetrofitClient.packApi.actualizar(pack.id, request)
-                packs = RetrofitClient.packApi.listar()
+                RetrofitGeneral.packApi.actualizar(pack.id, request)
+                packs = RetrofitGeneral.packApi.listar()
             } catch (e: Exception) {
                 mensaje = "No se pudo cambiar el estado del pack"
             }
@@ -140,8 +140,8 @@ class AdminPacksViewModel : ViewModel() {
     fun eliminar(id: Long) {
         viewModelScope.launch {
             try {
-                RetrofitClient.packApi.eliminar(id)
-                packs = RetrofitClient.packApi.listar()
+                RetrofitGeneral.packApi.eliminar(id)
+                packs = RetrofitGeneral.packApi.listar()
             } catch (e: HttpException) {
                 mensaje = "No se pudo eliminar el pack"
             } catch (e: Exception) {

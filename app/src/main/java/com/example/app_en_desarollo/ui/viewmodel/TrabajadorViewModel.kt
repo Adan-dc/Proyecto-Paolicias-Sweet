@@ -257,6 +257,13 @@ class TrabajadorViewModel : ViewModel(){
             return false
         }
 
+        if (!validarRut(state.rut)) {
+            uiState = uiState.copy(
+                rutError = "Debe ingresar un RUT válido"
+            )
+            return false
+        }
+
         if (state.correo.isBlank()) {
             uiState = uiState.copy(
                 correoError = "Debe ingresar el correo"
@@ -264,16 +271,9 @@ class TrabajadorViewModel : ViewModel(){
             return false
         }
 
-        if (
-            !state.correo.contains("@") ||
-            !state.correo.substringAfter("@").contains(".") ||
-            state.correo.endsWith(".") ||
-            state.correo.endsWith("@") ||
-            state.correo.startsWith(".") ||
-            state.correo.startsWith("@")
-        ) {
+        if (!validarCorreo(state.correo)) {
             uiState = uiState.copy(
-                correoError = "El correo debe ser válido"
+                correoError = "Debe ingresar un correo válido"
             )
             return false
         }
@@ -286,5 +286,16 @@ class TrabajadorViewModel : ViewModel(){
         }
 
         return true
+    }
+    private fun validarRut(rut: String): Boolean {
+        return Regex("^\\d{1,2}(\\.?\\d{3}){2}-[0-9kK]$").matches(rut.trim())
+    }
+    private fun validarCorreo(correo: String): Boolean {
+
+        val regex = Regex(
+            "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+        )
+
+        return regex.matches(correo)
     }
 }

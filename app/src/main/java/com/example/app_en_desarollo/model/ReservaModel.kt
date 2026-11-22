@@ -6,6 +6,7 @@ const val MAX_ASISTENTES = 100
 const val PRECIO_PERSONA = 9000
 
 data class ReservaModel(
+    val tipoEvento: String = "",
     val fecha: String = "",
     val hora: String = "",
     val asistentes: String ="",

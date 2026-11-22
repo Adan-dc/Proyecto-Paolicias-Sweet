@@ -10,7 +10,7 @@ import com.example.app_en_desarollo.R
 import com.gabriel.paoliciasSweet.model.ProductosModel
 import androidx.lifecycle.viewModelScope
 import com.example.app_en_desarollo.model.ProductoResponse
-import com.example.app_en_desarollo.network.RetrofitClient
+import com.example.app_en_desarollo.data.api.RetrofitGeneral
 import kotlinx.coroutines.launch
 import com.example.app_en_desarollo.model.PackResponse
 class CatalogoViewModel : ViewModel(){
@@ -31,10 +31,10 @@ class CatalogoViewModel : ViewModel(){
         viewModelScope.launch {
             cargando = true
             try {
-                val lista = RetrofitClient.productoApi.listar()
+                val lista = RetrofitGeneral.productoApi.listar()
                 val productosCargados = lista.map { aModelo(it) }
                 val packsCargados = try {
-                    RetrofitClient.packApi.listar()
+                    RetrofitGeneral.packApi.listar()
                         .filter { it.activo != false }
                         .map { packAModelo(it) }
                 } catch (e: Exception) {
@@ -56,6 +56,7 @@ class CatalogoViewModel : ViewModel(){
             .joinToString("\n") { it.ingrediente.nombre }
 
         return ProductosModel(
+            id = p.id,
             nombre = p.nombre,
             tipo = p.categoria?.nombre ?: "",
             precio = p.precioBase,
@@ -77,6 +78,7 @@ class CatalogoViewModel : ViewModel(){
             .joinToString("\n\n")
 
         return ProductosModel(
+            id = p.id,
             nombre = p.nombre,
             tipo = p.tipo ?: "",
             precio = p.precio,

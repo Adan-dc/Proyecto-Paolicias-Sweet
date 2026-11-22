@@ -14,6 +14,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -117,18 +118,17 @@ fun Footer(
 
     }
 }
+val LocalNavegarAdmin = staticCompositionLocalOf<(String) -> Unit> { {} }
+
 @Composable
 fun FooterAdmin(
-    onCalendarioClick: () -> Unit,
-    onProductosClick: () -> Unit,
-    onReservasClick: () -> Unit,
-    onCostoClick: () -> Unit,
-    onPersonalClick: () -> Unit,
     seleccionado: String = "",
     copyrightText: String = "© 2026 Paolicias-Sweet. Derechos reservados MAG.",
     backgroundColor: Color = Color(0xFF1B1B1B),
     textColor: Color = Color.Gray
 ){
+    val navegar = LocalNavegarAdmin.current
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -137,7 +137,7 @@ fun FooterAdmin(
         NavigationBar {
             NavigationBarItem(
                 selected = seleccionado == "Calendario",
-                onClick = { onCalendarioClick() },
+                onClick = { navegar("Calendario") },
                 icon = {
                     Icon(
                         imageVector = Icons.Default.DateRange,
@@ -152,7 +152,7 @@ fun FooterAdmin(
 
             NavigationBarItem(
                 selected = seleccionado == "Productos",
-                onClick = { onProductosClick() },
+                onClick = { navegar("Productos") },
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Apps,
@@ -166,7 +166,7 @@ fun FooterAdmin(
             )
             NavigationBarItem(
                 selected = seleccionado == "Costo",
-                onClick = { onCostoClick() },
+                onClick = { navegar("Costo") },
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Devices,
@@ -180,8 +180,8 @@ fun FooterAdmin(
             )
 
             NavigationBarItem(
-                selected = seleccionado == "Reserva",
-                onClick = { onReservasClick() },
+                selected = seleccionado == "Reservas",
+                onClick = { navegar("Reservas") },
                 icon = {
                     Icon(
                         imageVector = Icons.Default.AddCard,
@@ -196,7 +196,7 @@ fun FooterAdmin(
 
             NavigationBarItem(
                 selected = seleccionado == "Personal",
-                onClick = { onPersonalClick() },
+                onClick = { navegar("Personal") },
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Diversity3,

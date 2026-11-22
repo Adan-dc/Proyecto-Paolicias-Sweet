@@ -27,7 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.app_en_desarollo.R
-import com.example.app_en_desarollo.network.RetrofitClient
+import com.example.app_en_desarollo.data.api.RetrofitGeneral
 import java.io.ByteArrayOutputStream
 
 @Composable
@@ -40,7 +40,7 @@ fun ImagenProducto(
 ) {
     if (imagenUrl != null && imagenUrl.startsWith("imagen-")) {
         AsyncImage(
-            model = RetrofitClient.urlImagen(imagenUrl),
+            model = RetrofitGeneral.urlImagen(imagenUrl),
             contentDescription = descripcion,
             contentScale = contentScale,
             placeholder = painterResource(id = fallback),
