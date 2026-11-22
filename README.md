@@ -122,6 +122,50 @@ Durante todo el transcurso del proyecto, este repositorio manejará las actualiz
 - Redirección a la pantalla de reservas realizadas después de confirmar una reserva.
 - Transiciones animadas entre pantallas.
 
+### Calendario ADMIN
+
+- Navegación entre los días del año y los 12 meses para poder ver las reservas hechas durante el mes.
+- Muestra una pequeña información sobre el evento tal como: Correo del cliente, Hora del evento, Cantidad de personas y Id de la reserva
+
+### Productos ADMIN
+
+- Lista con los productos de la empresa.
+- Botones de crear, editar y borrar el producto.
+- Botones de navegación entre productos, ingredientes, packs, todos, menú, repostería y bebestibles.
+- Editar producto contiene los datos del producto, agregar ingredientes, asignar menú y seleccionar foto.
+- Crear producto contiene los datos solicitados para la creación exitosa de un producto, agregar ingredientes con cantidades, asignar menú y seleccionar foto.
+
+### Costo ADMIN
+
+- Lista con las reservas de los clientes.
+- Cheklist para administrar los eventos ya costeados.
+- Al ingresar al evento se muestra un checklist de los platos y su cantidad, al desplegar la información se muestran los ingredientes con sus cantidades y el precio por unidad y abajo el precio total, mas abajo se muestra el total del plato.
+- Botón de calcular costo total, muestra una lista con el plato su cantidad y consto total del plato y abajo además el costo total final del costo de ingredientes del evento.
+- Botón de volver a la pantalla anterior
+
+### Reserva ADMIN
+
+- Lista de las reservas de los clientes con una breve información y su estado del comprobante.
+- Filtro de todas, pendientes, confirmadas, canceladas, finalizadas, búsqueda por texto y actualizar.
+- Al seleccionar la reserva se muestran los datos de la misma, su presupuesto y estado del abono, también se incluyen los packs o productos del evento con sus totales y la información del pago y comprobante con el pago del 50% del abono.
+- Botones de ver comprobante y cancelar reserva.
+- Al presionar ver comprobante se muestra los datos del evento y la foto del comprobante que se agranda el presionarla, con los botones de rechazar o aprobar el comprobante además de una observación,también salen los comprobantes revisados anteriormente. 
+
+### Personal ADMIN
+
+- Lista de los trabajadores de la empresa con el estado de disponibilidad.
+- Selector de eventos con la cantidad de trabajadores asociados.
+- Botones de crear trabajador y modificar trabajador.
+- Al crear un trabajador se muestra un formulario con los datos del trabajador a rellenar y validaciones.
+- Al modificar un trabajador se muestra un formulario con los datos del trabajador a rellenar, validaciones y un botón de cancelar asignaciones.
+- Al seleccionar un trabajador se muestran sus datos con 3 botones, seleccionar evento que permite seleccionar un evento de la empresa y con el botón de asignar evento se confirma y se bloquea al trabajador para no asignarlo a más de uno, además del bloqueo y la información de su evento asignado, también un botón de eliminar el trabajador
+
+### Navegación ADMMIN
+
+- Navegación entre calendario, administración de productos, administración de costos, administración de reservas y comprobantes y administración de personal.
+- Acceso a las pantallas principales mediante barra de navegación inferior.
+- Transiciones animadas entre pantallas.
+
 ## Pasos para ejecutar el proyecto
 
 1. Clonar el repositorio desde GitHub.
