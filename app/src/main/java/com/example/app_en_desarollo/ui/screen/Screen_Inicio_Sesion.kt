@@ -334,7 +334,11 @@ fun FormularioSesionCliente(
 
                                     vibrarTelefono(context)
 
-                                    onNavigateToCatalogo()
+                                    if (SesionBiometrica.obtenerTipoUsuario(context) == TipoUsuario.ADMIN) {
+                                        onNavigateToAdmin()
+                                    } else {
+                                        onNavigateToCatalogo()
+                                    }
                                 },
 
                                 onError = { mensaje ->

@@ -151,6 +151,9 @@ fun AppNavigation(){
                         navegarFooter(Routes.REGISTER)
                     },
                     onNavigateToCatalogo = {
+                        reservaViewModel.setUsuario(
+                            SesionBiometrica.obtenerIdentificador(context) ?: ""
+                        )
                         navegarFooter(Routes.CATALOGO)
                     },
                     onNavigateToReserva = {

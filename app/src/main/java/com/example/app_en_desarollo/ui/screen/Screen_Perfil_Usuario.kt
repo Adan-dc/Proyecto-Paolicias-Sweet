@@ -217,39 +217,6 @@ fun infoPerfil(
                                     letterSpacing = 2.sp
                                 )
                             }
-
-                            Spacer(modifier = Modifier.height(32.dp))
-
-                            Button(
-                                onClick = {
-                                    if (SesionBiometrica.sesionVigente(context)) {
-                                        Toast.makeText(
-                                            context,
-                                            "Ya esta iniciada tu sesión",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        onNavigateToLogin()
-                                    }
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(40.dp)
-                                    .shadow(8.dp, shape = CircleShape),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.White,
-                                    contentColor = Color.Black
-                                ),
-                                border = BorderStroke(2.dp, Color.White),
-                                shape = CircleShape
-                            ) {
-                                Text(
-                                    text = "Iniciar Sesión",
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    letterSpacing = 2.sp
-                                )
-                            }
                         }
                     }
                 }
