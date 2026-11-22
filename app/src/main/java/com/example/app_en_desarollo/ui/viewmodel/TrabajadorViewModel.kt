@@ -78,31 +78,7 @@ class TrabajadorViewModel : ViewModel(){
         onError: () -> Unit
     ) {
 
-        if (uiState.nombreCompleto.isBlank()) {
-            uiState = uiState.copy(
-                nombreError = "Debe ingresar el nombre"
-            )
-            return
-        }
-
-        if (uiState.rut.isBlank()) {
-            uiState = uiState.copy(
-                rutError = "Debe ingresar el RUT"
-            )
-            return
-        }
-
-        if (uiState.correo.isBlank()) {
-            uiState = uiState.copy(
-                correoError = "Debe ingresar el correo"
-            )
-            return
-        }
-
-        if (uiState.direccion.isBlank()) {
-            uiState = uiState.copy(
-                direccionError = "Debe ingresar la dirección"
-            )
+        if (!validarFormulario()) {
             return
         }
 
@@ -150,6 +126,10 @@ class TrabajadorViewModel : ViewModel(){
     }
     fun actualizarTrabajador(id: Long, onSuccess: () -> Unit, onError: () -> Unit){
 
+        if (!validarFormulario()) {
+            return
+        }
+
         val trabajadorActualizado = TrabajadorModel(
             id = id,
             nombreCompleto = uiState.nombreCompleto,
@@ -159,16 +139,26 @@ class TrabajadorViewModel : ViewModel(){
             estado = uiState.estado,
             idReservaAsignada = uiState.idReservaAsignada
         )
+
         viewModelScope.launch {
+
             try {
-                RetrofitGeneral.trabajadorApi.actualizarTrabajador(id, trabajadorActualizado)
+
+                RetrofitGeneral.trabajadorApi
+                    .actualizarTrabajador(id, trabajadorActualizado)
 
                 listarTrabajadores()
 
                 onSuccess()
 
-            } catch (e: Exception){
+            } catch (e: Exception) {
+
+                uiState = uiState.copy(
+                    errorMessage = "No se pudo modificar el trabajador"
+                )
+
                 onError()
+
                 e.printStackTrace()
             }
         }
@@ -247,5 +237,54 @@ class TrabajadorViewModel : ViewModel(){
 
     fun limpiarReservaSeleccionada() {
         reservaSeleccionada = null
+    }
+
+    private fun validarFormulario(): Boolean {
+
+        val state = uiState
+
+        if (state.nombreCompleto.isBlank()) {
+            uiState = uiState.copy(
+                nombreError = "Debe ingresar el nombre"
+            )
+            return false
+        }
+
+        if (state.rut.isBlank()) {
+            uiState = uiState.copy(
+                rutError = "Debe ingresar el RUT"
+            )
+            return false
+        }
+
+        if (state.correo.isBlank()) {
+            uiState = uiState.copy(
+                correoError = "Debe ingresar el correo"
+            )
+            return false
+        }
+
+        if (
+            !state.correo.contains("@") ||
+            !state.correo.substringAfter("@").contains(".") ||
+            state.correo.endsWith(".") ||
+            state.correo.endsWith("@") ||
+            state.correo.startsWith(".") ||
+            state.correo.startsWith("@")
+        ) {
+            uiState = uiState.copy(
+                correoError = "El correo debe ser válido"
+            )
+            return false
+        }
+
+        if (state.direccion.isBlank()) {
+            uiState = uiState.copy(
+                direccionError = "Debe ingresar la dirección"
+            )
+            return false
+        }
+
+        return true
     }
 }

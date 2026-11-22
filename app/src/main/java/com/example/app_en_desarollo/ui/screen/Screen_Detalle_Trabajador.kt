@@ -48,6 +48,7 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 fun DetalleTrabajadorScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToCosto: () -> Unit,
     viewModel: TrabajadorViewModel
 ) {
 
@@ -89,7 +90,9 @@ fun DetalleTrabajadorScreen(
                 onCalendarioClick = {},
                 onProductosClick = {},
                 onReservasClick = {},
-                onCostoClick = {},
+                onCostoClick = {
+                    onNavigateToCosto()
+                },
                 onPersonalClick = {
                     onNavigateBack()
                 }

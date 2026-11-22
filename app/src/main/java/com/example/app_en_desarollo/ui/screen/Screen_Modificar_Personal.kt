@@ -44,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 fun ModificarTrabajadorScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToCosto: () -> Unit,
     viewModel: TrabajadorViewModel
 ) {
 
@@ -73,7 +74,9 @@ fun ModificarTrabajadorScreen(
                 onCalendarioClick = {},
                 onProductosClick = {},
                 onReservasClick = {},
-                onCostoClick = {},
+                onCostoClick = {
+                    onNavigateToCosto()
+                },
                 onPersonalClick = {
                     onNavigateBack()
                 }
@@ -168,12 +171,17 @@ fun ModificarTrabajadorScreen(
                                 fontSize = 16.sp
                             )
                         },
+                        isError = state.nombreError != null,
+                        supportingText = {
+                            state.nombreError?.let { mensaje ->
+                                Text(mensaje)
+                            }
+                        },
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontSize = 18.sp
                         ),
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(70.dp),
+                            .fillMaxWidth(),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White,
@@ -200,12 +208,17 @@ fun ModificarTrabajadorScreen(
                                 fontSize = 16.sp
                             )
                         },
+                        isError = state.rutError != null,
+                        supportingText = {
+                            state.rutError?.let { mensaje ->
+                                Text(mensaje)
+                            }
+                        },
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontSize = 18.sp
                         ),
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(70.dp),
+                            .fillMaxWidth(),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White,
@@ -232,12 +245,17 @@ fun ModificarTrabajadorScreen(
                                 fontSize = 16.sp
                             )
                         },
+                        isError = state.correoError != null,
+                        supportingText = {
+                            state.correoError?.let { mensaje ->
+                                Text(mensaje)
+                            }
+                        },
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontSize = 18.sp
                         ),
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(70.dp),
+                            .fillMaxWidth(),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White,
@@ -264,12 +282,17 @@ fun ModificarTrabajadorScreen(
                                 fontSize = 16.sp
                             )
                         },
+                        isError = state.direccionError != null,
+                        supportingText = {
+                            state.direccionError?.let { mensaje ->
+                                Text(mensaje)
+                            }
+                        },
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontSize = 18.sp
                         ),
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(70.dp),
+                            .fillMaxWidth(),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White,

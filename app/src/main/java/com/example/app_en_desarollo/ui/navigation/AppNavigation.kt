@@ -345,6 +345,9 @@ fun AppNavigation(){
         composable(Routes.DETALLE_TRABAJADOR) {
 
             DetalleTrabajadorScreen(
+                onNavigateToCosto = {
+                    navController.navigate(Routes.COSTO)
+                },
                 onNavigateBack = {
                     navController.popBackStack()
                 },
@@ -355,6 +358,9 @@ fun AppNavigation(){
         composable(Routes.CREAR_TRABAJADOR) {
 
             CrearTrabajadorScreen(
+                onNavigateToCosto = {
+                    navController.navigate(Routes.COSTO)
+                },
                 onNavigateBack = {
                     navController.popBackStack()
                 },
@@ -365,6 +371,9 @@ fun AppNavigation(){
         composable(Routes.MODIFICAR_TRABAJADOR) {
 
             ModificarTrabajadorScreen(
+                onNavigateToCosto = {
+                    navController.navigate(Routes.COSTO)
+                },
                 onNavigateBack = {
                     navController.popBackStack()
                 },
@@ -407,6 +416,9 @@ fun AppNavigation(){
         composable(Routes.RESUMEN_COSTO) {
 
             ResumenCostoScreen(
+                onNavigateToPersonal = {
+                    navegarFooter(Routes.ADMIN)
+                },
                 onNavigateBack = {
                     navController.popBackStack()
                 },

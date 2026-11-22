@@ -65,7 +65,7 @@ fun DetalleCostoScreen(
                     onNavigateBack()
                 },
                 onPersonalClick = {
-                    onNavigateToPersonal
+                    onNavigateToPersonal()
                 }
             )
         }

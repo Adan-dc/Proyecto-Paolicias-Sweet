@@ -35,6 +35,7 @@ import java.util.Locale
 @Composable
 fun ResumenCostoScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToPersonal: () -> Unit,
     viewModel: CostoViewModel
 ) {
 
@@ -53,7 +54,9 @@ fun ResumenCostoScreen(
                 onProductosClick = {},
                 onReservasClick = {},
                 onCostoClick = {},
-                onPersonalClick = {}
+                onPersonalClick = {
+                    onNavigateToPersonal()
+                }
             )
         }
 
